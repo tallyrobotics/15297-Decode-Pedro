@@ -48,9 +48,9 @@ public class Constants {
             .strafeEncoderDirection(Encoder.FORWARD)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD, RevHubOrientationOnRobot.UsbFacingDirection.UP))
-            .leftPodY((10.8/2.54))
-            .rightPodY(-(10.8/2.54))
-            .strafePodX(-75/2.54)
+            .leftPodY((109.53798/25.4))
+            .rightPodY(-(109.53798/25.4))
+            .strafePodX(-35.5/25.4)
             .forwardTicksToInches(0.0020005365)
             .strafeTicksToInches(0.0019121229);
 
