@@ -16,11 +16,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(12)
-            .forwardZeroPowerAcceleration(-27.0435805746)
-            .lateralZeroPowerAcceleration(-62.9584387379)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.015, 0, 0, 0))
-            .headingPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0, 0.01))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.025, 0, 0.00001, 0.6, 0.01))
+            .forwardZeroPowerAcceleration(-25.9588070151)
+            .lateralZeroPowerAcceleration(-53.1563064896)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0, 0))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.6, 0, 0, 0.01))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.015, 0, 0.00001, 0.6, 0.01))
             .centripetalScaling(0.0005);
     public static MecanumConstants driverConstants = new MecanumConstants()
             .maxPower(1)
@@ -32,14 +32,11 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .xVelocity(74.5442045056)
-            .yVelocity(58.8728179245);
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+            .xVelocity(76.2576928996)
+            .yVelocity(60.6159339653);
+    public static PathConstraints pathConstraints = new PathConstraints(0.995, 100, 3, 1);
 
     public static ThreeWheelIMUConstants localizerConstants = new ThreeWheelIMUConstants()
-            .forwardTicksToInches(.001989436789)
-            .strafeTicksToInches(.001989436789)
-            .turnTicksToInches(.001989436789)
             .leftEncoder_HardwareMapName("leftFront")
             .rightEncoder_HardwareMapName("rightFront")
             .strafeEncoder_HardwareMapName("rightRear")
@@ -51,8 +48,9 @@ public class Constants {
             .leftPodY((109.53798/25.4))
             .rightPodY(-(109.53798/25.4))
             .strafePodX(-35.5/25.4)
-            .forwardTicksToInches(0.0020005365)
-            .strafeTicksToInches(0.0019121229);
+            .forwardTicksToInches(0.0019607091)
+            .strafeTicksToInches(0.0019603589)
+            .turnTicksToInches(0.0020123298);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
