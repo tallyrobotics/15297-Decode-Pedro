@@ -48,7 +48,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
 //    private Follower follower;
 
-    private final Pose startPose = new Pose(0, 0, 0);
+    private final Pose startPose = new Pose(120.5, 127.7, Math.toRadians(216.8));
 
 
     boolean USE_WEBCAM;
@@ -61,20 +61,38 @@ public class Decode_Red_Auto extends NextFTCOpMode {
     public void buildPaths() {
 
                line1 = follower().pathBuilder()
-                .addPath(new BezierLine(startPose, new Pose(24, 0,0 )))
-                .setConstantHeadingInterpolation(0)
+                       .addPath(
+                               new BezierLine(new Pose(120.500, 127.700), new Pose(108.100, 118.300))
+                       )
+                       .setLinearHeadingInterpolation(
+                               Math.toRadians(216.8),
+                               Math.toRadians(126.8)
+                       )
                        .build();
+
                line2 = follower().pathBuilder()
-                       .addPath(new BezierLine(new Pose(24,0,0), new Pose(24,24,0)))
-                       .setConstantHeadingInterpolation(0)
+                       .addPath(
+                               new BezierCurve(
+                                       new Pose(108.100, 118.300),
+                                       new Pose(72.196, 82.202),
+                                       new Pose(100.000, 83.500)
+                               )
+                       )
+                       .setLinearHeadingInterpolation(Math.toRadians(126.8), Math.toRadians(0))
                        .build();
+
                line3 = follower().pathBuilder()
-                       .addPath(new BezierLine(new Pose(24,24,0), new Pose(0,24,0)))
-                       .setConstantHeadingInterpolation(0)
+                       .addPath(
+                               new BezierLine(new Pose(100.000, 83.500), new Pose(125.000, 83.500))
+                       )
+                       .setConstantHeadingInterpolation(Math.toRadians(0))
                        .build();
+
                line4 = follower().pathBuilder()
-                       .addPath(new BezierLine(new Pose(0,24,0), new Pose(0,0,0)))
-                       .setConstantHeadingInterpolation(0)
+                       .addPath(
+                               new BezierLine(new Pose(125.000, 83.500), new Pose(108.100, 118.300))
+                       )
+                       .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(126.8))
                        .build();
 
     }
