@@ -9,9 +9,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.legacy.subsystems.flyLeftShooter;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.flyRightShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.leftLift;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.rightLift;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+import dev.nextftc.core.commands.groups.ParallelGroup;
+import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
@@ -26,6 +32,7 @@ import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.extensions.pedro.PedroComponent;
 
 import dev.nextftc.hardware.driving.HolonomicMode;
+import dev.nextftc.hardware.driving.FieldCentric;
 import dev.nextftc.hardware.driving.HolonomicDrivePowers;
 
 @TeleOp(name = "Decode Teleop")
@@ -36,6 +43,10 @@ public class Decode_Teleop extends NextFTCOpMode {
         addComponents(
                 new PedroComponent(Constants::createFollower),
                 new SubsystemComponent(intake.INSTANCE),
+                new SubsystemComponent(flyRightShooter.INSTANCE),
+                new SubsystemComponent(flyLeftShooter.INSTANCE),
+//                new SubsystemComponent(leftLift.INSTANCE),
+//                new SubsystemComponent(rightLift.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
 
@@ -70,8 +81,8 @@ public class Decode_Teleop extends NextFTCOpMode {
         rightFrontMotor = new MotorEx(rightFrontName);
         rightRearMotor = new MotorEx(rightRearName);
 
-        leftFrontMotor.setDirection(-1);
-        leftRearMotor.setDirection(-1);
+        leftFrontMotor.setDirection(1);
+        leftRearMotor.setDirection(1);
         rightFrontMotor.setDirection(1);
         rightRearMotor.setDirection(1);
 
@@ -90,12 +101,17 @@ public class Decode_Teleop extends NextFTCOpMode {
         rightRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFrontMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRearMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        telemetry.addData("flyLeft RPM",flyLeftShooter.INSTANCE.flyLeft.getVelocity());
+        telemetry.addData("flyRight RPM",flyRightShooter.INSTANCE.flyRight.getVelocity());
     }
 
     @Override
     public void onStartButtonPressed()
     {
         intake.INSTANCE.IntakeIn().schedule();
+        flyRightShooter.INSTANCE.flyRightSetRPM(1800).schedule();
+        flyLeftShooter.INSTANCE.flyLeftSetRPM(1800).schedule();
 
         driverControlled = new MecanumDriverControlled(
                 leftFrontMotor,
@@ -104,7 +120,8 @@ public class Decode_Teleop extends NextFTCOpMode {
                 rightRearMotor,
                 Gamepads.gamepad1().leftStickY().negate(),
                 Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX());
+                Gamepads.gamepad1().rightStickX(),
+                new FieldCentric(imu));
 
         driverControlled.schedule();
 
@@ -113,6 +130,12 @@ public class Decode_Teleop extends NextFTCOpMode {
         Gamepads.gamepad1().rightBumper().whenBecomesFalse(() -> new InstantCommand(() -> {speed=normal;}));
         Gamepads.gamepad1().leftBumper().whenBecomesFalse(() -> new InstantCommand(() -> {speed=normal;}));
 
+        Gamepads.gamepad2().leftBumper().whenBecomesTrue(intake.INSTANCE.IntakeIn());
+        Gamepads.gamepad2().leftBumper().whenBecomesFalse(intake.INSTANCE.IntakeOut());
+        Gamepads.gamepad2().x().whenBecomesTrue(intake.INSTANCE.IntakeOff());
+//        Gamepads.gamepad2().rightBumper().whenBecomesTrue(new ParallelGroup(
+//                leftLift.INSTANCE.shootCycle(),
+//                rightLift.INSTANCE.shootCycle()));
 
     }
 
