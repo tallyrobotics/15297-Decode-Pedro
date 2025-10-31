@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -28,6 +29,7 @@ import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.CommandManager;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.ActiveOpMode;
@@ -41,14 +43,16 @@ import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 public class Decode_Red_Auto extends NextFTCOpMode {
     public Decode_Red_Auto(){
         addComponents(
-                new PedroComponent(Constants::createFollower)
+                new PedroComponent(Constants::createFollower),
+                new SubsystemComponent(intake.INSTANCE)
         );
     }
 
 
 //    private Follower follower;
 
-    private final Pose startPose = new Pose(120.5, 127.7, Math.toRadians(216.8));
+    private final Pose startPose = new Pose(120.5, 127.7, Math.toRadians(306.8));
+    private final Pose shootPose = new Pose(108.1, 118.3, Math.toRadians(306.8));
 
 
     boolean USE_WEBCAM;
@@ -56,56 +60,144 @@ public class Decode_Red_Auto extends NextFTCOpMode {
     VisionPortal myVisionPortal;
 
 
-    private PathChain line1, line2, line3, line4;
+    private PathChain line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11;
 
     public void buildPaths() {
 
                line1 = follower().pathBuilder()
                        .addPath(
-                               new BezierLine(new Pose(120.500, 127.700), new Pose(108.100, 118.300))
+                               new BezierLine(new Pose(120.500, 127.700), shootPose)
                        )
-                       .setLinearHeadingInterpolation(
-                               Math.toRadians(216.8),
-                               Math.toRadians(126.8)
-                       )
+                       .setConstantHeadingInterpolation(Math.toRadians(306.8))
+                       .setBrakingStrength(5)
                        .build();
 
-               line2 = follower().pathBuilder()
+               line2 = follower()
+                       .pathBuilder()
                        .addPath(
-                               new BezierCurve(
-                                       new Pose(108.100, 118.300),
-                                       new Pose(72.196, 82.202),
-                                       new Pose(100.000, 83.500)
-                               )
+                                new BezierLine(shootPose, new Pose(100.000, 83.500))
                        )
-                       .setLinearHeadingInterpolation(Math.toRadians(126.8), Math.toRadians(0))
+                       .setLinearHeadingInterpolation(Math.toRadians(306.8), Math.toRadians(0))
+                       .setBrakingStrength(5)
                        .build();
 
-               line3 = follower().pathBuilder()
-                       .addPath(
-                               new BezierLine(new Pose(100.000, 83.500), new Pose(125.000, 83.500))
-                       )
-                       .setConstantHeadingInterpolation(Math.toRadians(0))
-                       .build();
+                line3 = follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(100.000, 83.500), new Pose(125.000, 83.500))
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                        .setBrakingStrength(5)
+                .build();
 
-               line4 = follower().pathBuilder()
-                       .addPath(
-                               new BezierLine(new Pose(125.000, 83.500), new Pose(108.100, 118.300))
-                       )
-                       .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(126.8))
-                       .build();
+        line4 = follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(125.000, 83.500), shootPose)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(306.8))
+                .setBrakingStrength(5)
+                .build();
+
+        line5 = follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(108.100, 118.300), new Pose(100.000, 60.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(306.88), Math.toRadians(0))
+                .setBrakingStrength(5)
+                .build();
+
+        line6 = follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(100.000, 60.000), new Pose(125.000, 60.000))
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setBrakingStrength(5)
+                .build();
+
+        line7 = follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(125.000, 60.000),
+                                new Pose(104.424, 56.424),
+                                shootPose
+                        )
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(306.8))
+                .setBrakingStrength(5)
+                .build();
+
+        line8 = follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(shootPose, new Pose(98.000, 34.500))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(306.8), Math.toRadians(0))
+                .setBrakingStrength(5)
+                .build();
+
+        line9 = follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(98.000, 34.500), new Pose(125.000, 34.500))
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setBrakingStrength(5)
+                .build();
+
+        line10 = follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(125.000, 34.500),
+                                new Pose(111.869, 34.678),
+                                shootPose
+                        )
+                )
+
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(306.8))
+                .setBrakingStrength(5)
+                .build();
+
+        line11 = follower()
+                .pathBuilder()
+              .addPath(
+                new BezierLine(shootPose, new Pose(123.037, 97.176))
+        )
+                .setLinearHeadingInterpolation(Math.toRadians(306.8), Math.toRadians(215))
+                .setBrakingStrength(5)
+                .build();
 
     }
 
     public Command doAuto() {
         return new SequentialGroup(
-                new FollowPath(line1, true, 0.5),
-                new Delay(1),
-                new FollowPath(line2, true, 0.5),
-                new Delay(1),
-                new FollowPath(line3, true, 0.5),
-                new Delay(1),
-                new FollowPath(line4, true, 0.5)
+                intake.INSTANCE.IntakeIn(),
+                new FollowPath(line1, true, 0.85),
+                new Delay(2),
+                new FollowPath(line2, false, 0.85),
+                new Delay(0.25),
+                new FollowPath(line3, true, 0.3),
+                new Delay(0.25),
+                new FollowPath(line4, true, 0.85),
+                new Delay(2),
+                new FollowPath(line5, false, 0.85),
+                new Delay(0.25),
+                new FollowPath(line6, true, 0.3),
+                new Delay(0.25),
+                new FollowPath(line7, true, 0.85),
+                new Delay(2),
+                new FollowPath(line8, false, 0.85),
+                new Delay(0.25),
+                new FollowPath(line9, true, 0.3),
+                new Delay(0.25),
+                new FollowPath(line10, true, 0.85),
+                new Delay(2),
+                new FollowPath(line11, false, 1.0)
+
         );
 
 
