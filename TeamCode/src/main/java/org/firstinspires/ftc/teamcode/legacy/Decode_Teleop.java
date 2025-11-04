@@ -1,21 +1,17 @@
 package org.firstinspires.ftc.teamcode.legacy;
 
-import com.bylazar.gamepad.GamepadManager;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.geometry.Pose;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.legacy.subsystems.backTwo;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyLeftShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyRightShooter;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.frontOne;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.leftLift;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.rightLift;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
+import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.commands.utility.InstantCommand;
@@ -31,10 +27,6 @@ import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.extensions.pedro.PedroComponent;
 
-import dev.nextftc.hardware.driving.HolonomicMode;
-import dev.nextftc.hardware.driving.FieldCentric;
-import dev.nextftc.hardware.driving.HolonomicDrivePowers;
-
 @TeleOp(name = "Decode Teleop")
 public class Decode_Teleop extends NextFTCOpMode {
 
@@ -45,8 +37,8 @@ public class Decode_Teleop extends NextFTCOpMode {
                 new SubsystemComponent(intake.INSTANCE),
                 new SubsystemComponent(flyRightShooter.INSTANCE),
                 new SubsystemComponent(flyLeftShooter.INSTANCE),
-//                new SubsystemComponent(leftLift.INSTANCE),
-//                new SubsystemComponent(rightLift.INSTANCE),
+                new SubsystemComponent(backTwo.INSTANCE),
+                new SubsystemComponent(frontOne.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
 
@@ -69,6 +61,7 @@ public class Decode_Teleop extends NextFTCOpMode {
     private final Double normal = 0.75;
     private final Double turtle = 0.5;
     private Double speed;
+    private final int shootRPM = 1000;
 
     public MecanumDriverControlled driverControlled;
 
@@ -89,6 +82,8 @@ public class Decode_Teleop extends NextFTCOpMode {
 
         PedroComponent.follower().setStartingPose(new Pose(0, 0, 0));
 
+        flyRightShooter.INSTANCE.flyRightOff();
+        flyLeftShooter.INSTANCE.flyLeftOff();
         PedroComponent.follower().update();
 
     }
@@ -104,14 +99,14 @@ public class Decode_Teleop extends NextFTCOpMode {
 
         telemetry.addData("flyLeft RPM",flyLeftShooter.INSTANCE.flyLeft.getVelocity());
         telemetry.addData("flyRight RPM",flyRightShooter.INSTANCE.flyRight.getVelocity());
+        telemetry.update();
     }
 
     @Override
     public void onStartButtonPressed()
     {
         intake.INSTANCE.IntakeIn().schedule();
-        flyRightShooter.INSTANCE.flyRightSetRPM(1800).schedule();
-        flyLeftShooter.INSTANCE.flyLeftSetRPM(1800).schedule();
+
 
         driverControlled = new MecanumDriverControlled(
                 leftFrontMotor,
@@ -120,8 +115,9 @@ public class Decode_Teleop extends NextFTCOpMode {
                 rightRearMotor,
                 Gamepads.gamepad1().leftStickY().negate(),
                 Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX(),
-                new FieldCentric(imu));
+                Gamepads.gamepad1().rightStickX());//,
+//
+
 
         driverControlled.schedule();
 
@@ -130,12 +126,34 @@ public class Decode_Teleop extends NextFTCOpMode {
         Gamepads.gamepad1().rightBumper().whenBecomesFalse(() -> new InstantCommand(() -> {speed=normal;}));
         Gamepads.gamepad1().leftBumper().whenBecomesFalse(() -> new InstantCommand(() -> {speed=normal;}));
 
-        Gamepads.gamepad2().leftBumper().whenBecomesTrue(intake.INSTANCE.IntakeIn());
-        Gamepads.gamepad2().leftBumper().whenBecomesFalse(intake.INSTANCE.IntakeOut());
+        Gamepads.gamepad2().leftBumper().whenBecomesTrue(intake.INSTANCE.IntakeOut());
+        Gamepads.gamepad2().leftBumper().whenBecomesFalse(intake.INSTANCE.IntakeIn());
         Gamepads.gamepad2().x().whenBecomesTrue(intake.INSTANCE.IntakeOff());
-//        Gamepads.gamepad2().rightBumper().whenBecomesTrue(new ParallelGroup(
-//                leftLift.INSTANCE.shootCycle(),
-//                rightLift.INSTANCE.shootCycle()));
+        Gamepads.gamepad2().rightBumper().whenBecomesTrue(new ParallelGroup(
+                backTwo.INSTANCE.shootCycle(),
+                new SequentialGroup(
+                        new Delay(0.5),
+                        frontOne.INSTANCE.shootCycle()
+                )
+                )
+        );
+
+        Gamepads.gamepad2().dpadDown().whenBecomesTrue(new ParallelGroup(
+                flyRightShooter.INSTANCE.flyRightSetRPM(400),
+                flyLeftShooter.INSTANCE.flyLeftSetRPM(400)
+        ));
+        Gamepads.gamepad2().dpadLeft().whenBecomesTrue(new ParallelGroup(
+                flyRightShooter.INSTANCE.flyRightSetRPM(200),
+                flyLeftShooter.INSTANCE.flyLeftSetRPM(200)
+        ));
+        Gamepads.gamepad2().dpadRight().whenBecomesTrue(new ParallelGroup(
+                flyRightShooter.INSTANCE.flyRightSetRPM(100),
+                flyLeftShooter.INSTANCE.flyLeftSetRPM(100)
+        ));
+        Gamepads.gamepad2().dpadUp().whenBecomesTrue(new ParallelGroup(
+                flyRightShooter.INSTANCE.flyRightSetRPM(1000),
+                flyLeftShooter.INSTANCE.flyLeftSetRPM(1000)
+        ));
 
     }
 
