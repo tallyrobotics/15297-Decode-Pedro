@@ -3,19 +3,17 @@ package org.firstinspires.ftc.teamcode.legacy.subsystems;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import dev.nextftc.core.commands.Command;
-import org.firstinspires.ftc.ftccommon.internal.manualcontrol.commands.ServoCommands;
-
 import dev.nextftc.core.commands.delays.Delay;
+import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
-import dev.nextftc.hardware.impl.ServoEx;
-
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
 
-public class leftLift implements Subsystem {
+public class frontOne implements Subsystem {
 
-public static final leftLift INSTANCE = new leftLift();
-private leftLift(){}
+public static final frontOne INSTANCE = new frontOne();
+private frontOne(){}
 
     public static final Double down = 0.0;
     public static final Double up = 1.0;
@@ -23,7 +21,8 @@ private leftLift(){}
     private boolean isUp = false;
 
     public ServoEx lift;
-    public String name = "leftLift";
+    public String name = "frontOne";
+
 
     public Command toggle(){
         if (isUp) {
@@ -44,16 +43,23 @@ private leftLift(){}
     }
 
     public Command shootCycle(){
-        return new SequentialGroup(
-                up(),
-                new Delay(0.5),
-                down()
-        );
-    }
 
+            return new SequentialGroup(
+                    up(),
+                    new Delay(0.5),
+                    down()
+            );
+
+    }
 
     @Override
     public void initialize(){
-        lift.getServo().setDirection(Servo.Direction.FORWARD);
+        lift = new ServoEx(name);
+        lift.getServo().setDirection(Servo.Direction.REVERSE);
+    }
+
+    @Override
+    public void periodic(){
+
     }
 }

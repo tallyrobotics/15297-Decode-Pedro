@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import androidx.annotation.NonNull;
+
 import com.bylazar.opmodecontrol.OpModeStatus;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
@@ -9,6 +14,7 @@ import dev.nextftc.control.ControlSystem;
 import dev.nextftc.control.KineticState;
 import dev.nextftc.control.feedback.AngleType;
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -24,30 +30,39 @@ public class flyRightShooter implements Subsystem {
     public MotorEx flyRight;
     public String flyRightName = "flyRight";
 
+
+    private double targetRPM = 0;
+
+
     ControlSystem controlSystem = ControlSystem.builder()
             .angular(AngleType.DEGREES,
-                    feedback -> feedback.posPid(0.01, 0.0, 0.05)
+                    feedback -> feedback.posPid(0.005, 0.0, 0.05)
             )
             .basicFF()
 
             .build();
 
 
-
-
-
-    public Command flyRightOff() {
-        return new SetPower(flyRight, 0);
+@NonNull
+    public Command getDefaultCommand(){
+        return new RunToVelocity(controlSystem, targetRPM, 5);
     }
 
-    public Command flyRightSetRPM(int targetRPM) {
-        return new RunToVelocity(controlSystem, targetRPM, 25);
+    public Command flyRightOff(){
+        return new InstantCommand(() -> {targetRPM=0;});
+    }
+
+    public Command flyRightSetRPM(double target){
+        return new InstantCommand(()-> {targetRPM=target/60;});
     }
 
     @Override
     public void initialize(){
-        flyRight = new MotorEx(flyRightName);
-        flyRight.setDirection(-1);
+
+        flyRight = new MotorEx(flyRightName).reversed();
+
+        flyRightOff().schedule();
+
     }
 
     @Override
@@ -58,9 +73,5 @@ public class flyRightShooter implements Subsystem {
                         new KineticState(flyRight.getCurrentPosition(), flyRight.getVelocity())
                 )
         );
-
     }
-
-
-
 }
