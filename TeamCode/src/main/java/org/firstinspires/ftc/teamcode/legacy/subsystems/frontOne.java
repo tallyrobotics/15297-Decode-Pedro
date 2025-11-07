@@ -13,7 +13,7 @@ import dev.nextftc.hardware.positionable.SetPosition;
 public class frontOne implements Subsystem {
 
 public static final frontOne INSTANCE = new frontOne();
-private frontOne(){}
+private frontOne() {}
 
     public static final Double down = 0.0;
     public static final Double up = 1.0;
@@ -23,17 +23,17 @@ private frontOne(){}
     public ServoEx lift;
     public String name = "frontOne";
 
-
-    public Command toggle(){
+    public Command toggle() {
         if (isUp) {
-            isUp=false;
+            isUp = false;
             return up();
         }
-        else{
-            isUp=true;
+        else {
+            isUp = true;
             return down();
         }
     }
+
     public Command up(){
         return new SetPosition(lift, up);
     }
@@ -42,24 +42,21 @@ private frontOne(){}
         return new SetPosition(lift, down);
     }
 
-    public Command shootCycle(){
-
+    public Command shootCycle() {
             return new SequentialGroup(
                     up(),
                     new Delay(0.5),
                     down()
             );
-
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
         lift = new ServoEx(name);
         lift.getServo().setDirection(Servo.Direction.REVERSE);
     }
 
     @Override
-    public void periodic(){
-
+    public void periodic() {
     }
 }

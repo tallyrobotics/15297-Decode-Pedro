@@ -1,20 +1,17 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
 import com.qualcomm.robotcore.hardware.Servo;
-
 import dev.nextftc.core.commands.Command;
-
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.hardware.impl.ServoEx;
-
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.positionable.SetPosition;
 
 public class backTwo implements Subsystem {
 
 public static final backTwo INSTANCE = new backTwo();
-private backTwo(){}
+private backTwo() {}
 
     public static final Double down = 0.0;
     public static final Double up = 1.0;
@@ -24,26 +21,26 @@ private backTwo(){}
     public ServoEx lift;
     public String name = "backTwo";
 
-
-    public Command toggle(){
+    public Command toggle() {
         if (isUp) {
-            isUp=false;
+            isUp = false;
             return up();
         }
-        else{
-            isUp=true;
+        else {
+            isUp = true;
             return down();
         }
     }
-    public Command up(){
+
+    public Command up() {
         return new SetPosition(lift, up);
     }
 
-    public Command down(){
+    public Command down() {
         return new SetPosition(lift, down);
     }
 
-    public Command shootCycle(){
+    public Command shootCycle() {
         return new SequentialGroup(
                 up(),
                 new Delay(0.5),
@@ -51,9 +48,8 @@ private backTwo(){}
         );
     }
 
-
     @Override
-    public void initialize(){
+    public void initialize() {
         lift = new ServoEx(name);
         lift.getServo().setDirection(Servo.Direction.FORWARD);
     }

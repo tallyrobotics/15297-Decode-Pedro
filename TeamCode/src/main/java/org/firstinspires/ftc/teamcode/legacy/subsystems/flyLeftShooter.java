@@ -1,72 +1,58 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
+//import androidx.annotation.NonNull;
+//import dev.nextftc.control.ControlSystem;
+//import dev.nextftc.core.commands.Command;
+//import dev.nextftc.core.commands.utility.InstantCommand;
+//import dev.nextftc.core.subsystems.Subsystem;
+//import dev.nextftc.hardware.controllable.RunToVelocity;
+//import dev.nextftc.hardware.impl.MotorEx;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+public class flyLeftShooter extends flyShooter {// implements Subsystem {
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+    public static final flyLeftShooter INSTANCE = new flyLeftShooter("flyLeft", true);
 
-import dev.nextftc.control.ControlSystem;
-import dev.nextftc.control.KineticState;
-import dev.nextftc.control.feedback.AngleType;
-import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.commands.utility.InstantCommand;
-import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.hardware.controllable.RunToVelocity;
-import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.powerable.SetPower;
-
-public class flyLeftShooter implements Subsystem {
-
-    public static final flyLeftShooter INSTANCE = new flyLeftShooter();
-
-    private flyLeftShooter() {
+    public flyLeftShooter(String motorName, boolean reverseMotor) {
+        super(motorName, reverseMotor);
     }
 
-    public MotorEx flyLeft;
-    public String flyLeftName = "flyLeft";
-
-    private double targetRPM = 0;
-
-    ControlSystem controlSystem = ControlSystem.builder()
-            .angular(AngleType.DEGREES,
-                    feedback -> feedback.posPid(0.005, 0.0, 0.05)
-            )
-            .basicFF()
-
-            .build();
-
-
-
-
-
-    public Command getDefaultCommand(){
-        return new RunToVelocity(controlSystem, targetRPM, 5);
-    }
-
-    public Command flyLeftOff(){
-        return new InstantCommand(() -> {targetRPM=0;});
-    }
-
-    public Command flyLeftSetRPM(double target){
-        return new InstantCommand(()-> {targetRPM=target / 60;});
-    }
-
-    @Override
-    public void initialize(){
-        flyLeft = new MotorEx(flyLeftName).reversed();
-        flyLeftOff().schedule();
-    }
-
-    @Override
-    public void periodic()
-    {
-        flyLeft.setPower(
-                controlSystem.calculate(
-                        new KineticState(flyLeft.getCurrentPosition(), flyLeft.getVelocity())
-                )
-        );
-    }
-
-
-
+//    private flyLeftShooter() {}
+//
+//    public MotorEx flyLeft;
+//    public String flyLeftName = "flyLeft";
+//
+//    private double targetTPS = 0;
+//
+//    public ControlSystem controlSystem = ControlSystem.builder()
+//            .velPid(0.011,0,0)
+//            .basicFF(0.0005)
+//            .build();
+//
+//    @NonNull
+//    public Command getDefaultCommand() {
+//        return new RunToVelocity(controlSystem, targetTPS, 5).requires(this);
+//    }
+//
+//    public Command flyLeftOff() {
+//        return new InstantCommand(()-> targetTPS = 0);
+//    }
+//
+//    public Command flyLeftSetRPM(double targetRPM) {
+//        return new InstantCommand(() -> targetTPS = ((targetRPM*28)/60)*2.89); // 3:1 = 2.89:1
+//    }
+//
+//    public double getTargetTPS() {
+//        return targetTPS;
+//    }
+//
+//    @Override
+//    public void initialize() {
+//        flyLeft = new MotorEx(flyLeftName).reversed();
+//    }
+//
+//    @Override
+//    public void periodic()
+//    {
+//        flyLeft.setPower(controlSystem.calculate(flyLeft.getState()));
+//    }
 }

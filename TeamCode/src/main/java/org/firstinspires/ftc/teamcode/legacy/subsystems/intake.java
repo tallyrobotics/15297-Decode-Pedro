@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
-
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.MotorEx;
@@ -16,7 +15,6 @@ public class intake implements Subsystem {
     public MotorEx intake;
     public String intakeName = "intake";
 
-
     public Command IntakeIn() {
         return new SetPower(intake, 1);
     }
@@ -30,17 +28,11 @@ public class intake implements Subsystem {
     }
 
     @Override
-    public void initialize(){
-        intake = new MotorEx(intakeName);
-        intake.setDirection(-1);
+    public void initialize() {
+        intake = new MotorEx(intakeName).reversed();
     }
 
     @Override
-    public void periodic()
-    {
-
+    public void periodic() {
     }
-
-
-
 }
