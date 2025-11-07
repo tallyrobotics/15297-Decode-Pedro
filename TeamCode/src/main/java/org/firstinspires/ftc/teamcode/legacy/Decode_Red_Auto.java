@@ -179,8 +179,8 @@ public class Decode_Red_Auto extends NextFTCOpMode {
         return new SequentialGroup(
                 new ParallelGroup(
                         intake.INSTANCE.IntakeIn(),
-                        flyLeftShooter.INSTANCE.flyLeftSetRPM(shootRPM),
-                        flyRightShooter.INSTANCE.flyRightSetRPM(shootRPM),
+//                        flyLeftShooter.INSTANCE.flySetRPM(shootRPM),
+//                        flyRightShooter.INSTANCE.flySetRPM(shootRPM),
                         new FollowPath(line1, false, 0.85)
                 ),
                 new Delay(0.25),
