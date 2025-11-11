@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.legacy.subsystems.flyRightShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.backTwo;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.frontOne;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.flyShooter;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -51,10 +52,10 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
 //    private Follower follower;
 
-    private final Pose startPose = new Pose(120.7, 128.6, Math.toRadians(306.8));
-    private final Pose shootPose = new Pose(88, 100, Math.toRadians(306.8));
+    private final Pose startPose = new Pose(120.7, 128.6, Math.toRadians(312));
+    private final Pose shootPose = new Pose(108.1, 118.3, Math.toRadians(312));
 
-    private final int shootRPM = 1000;
+    private final int shootRPM = 1900;
 
 
     boolean USE_WEBCAM;
@@ -70,26 +71,23 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                        .addPath(
                                new BezierLine(startPose, shootPose)
                        )
-                       .setConstantHeadingInterpolation(Math.toRadians(306.8))
-                       .setBrakingStrength(5)
+                       .setConstantHeadingInterpolation(Math.toRadians(312))
                        .build();
 
-               line2 = follower()
-                       .pathBuilder()
-                       .addPath(
-                                new BezierLine(shootPose, new Pose(100.000, 83.500))
-                       )
-                       .setLinearHeadingInterpolation(Math.toRadians(306.8), Math.toRadians(0))
-                       .setBrakingStrength(5)
-                       .build();
+        line2 = follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(shootPose, new Pose(100.000, 83.500))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(0))
+                .build();
 
-                line3 = follower()
+        line3 = follower()
                 .pathBuilder()
                 .addPath(
                         new BezierLine(new Pose(100.000, 83.500), new Pose(125.000, 83.500))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
-                        .setBrakingStrength(5)
                 .build();
 
         line4 = follower()
@@ -97,26 +95,23 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                 .addPath(
                         new BezierLine(new Pose(125.000, 83.500), shootPose)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(306.8))
-                .setBrakingStrength(5)
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(312))
                 .build();
 
         line5 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(108.100, 118.300), new Pose(100.000, 60.000))
+                        new BezierLine(shootPose, new Pose(99.000, 60.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(306.88), Math.toRadians(0))
-                .setBrakingStrength(5)
+                .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(0))
                 .build();
 
         line6 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(100.000, 60.000), new Pose(125.000, 60.000))
+                        new BezierLine(new Pose(99.000, 60.000), new Pose(125.000, 60.000))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
-                .setBrakingStrength(5)
                 .build();
 
         line7 = follower()
@@ -128,49 +123,43 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                                 shootPose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(306.8))
-                .setBrakingStrength(5)
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(312))
                 .build();
 
         line8 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose, new Pose(98.000, 34.500))
+                        new BezierLine(shootPose, new Pose(98.000, 36.500))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(306.8), Math.toRadians(0))
-                .setBrakingStrength(5)
+                .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(0))
                 .build();
 
         line9 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(98.000, 34.500), new Pose(125.000, 34.500))
+                        new BezierLine(new Pose(98.000, 36.500), new Pose(125.000, 36.500))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0))
-                .setBrakingStrength(5)
                 .build();
 
         line10 = follower()
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(125.000, 34.500),
+                                new Pose(125.000, 36.500),
                                 new Pose(111.869, 34.678),
                                 shootPose
                         )
                 )
-
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(306.8))
-                .setBrakingStrength(5)
+                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(312))
                 .build();
 
         line11 = follower()
                 .pathBuilder()
-              .addPath(
-                new BezierLine(shootPose, new Pose(123, 97))
-        )
-                .setLinearHeadingInterpolation(Math.toRadians(306.8), Math.toRadians(225))
-                .setBrakingStrength(5)
+                .addPath(
+                        new BezierLine(shootPose, new Pose(123.000, 97.000))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(312), Math.toRadians(225))
                 .build();
 
     }
@@ -179,9 +168,9 @@ public class Decode_Red_Auto extends NextFTCOpMode {
         return new SequentialGroup(
                 new ParallelGroup(
                         intake.INSTANCE.IntakeIn(),
-//                        flyLeftShooter.INSTANCE.flySetRPM(shootRPM),
-//                        flyRightShooter.INSTANCE.flySetRPM(shootRPM),
-                        new FollowPath(line1, false, 0.85)
+                        flyLeftShooter.INSTANCE.flySetRPM(shootRPM),
+                        flyRightShooter.INSTANCE.flySetRPM(shootRPM),
+                        new FollowPath(line1, true, 0.85)
                 ),
                 new Delay(0.25),
                 new ParallelGroup(
@@ -193,13 +182,13 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
                         new SequentialGroup(
                                 new Delay(1.5),
-                                new FollowPath(line2, false, 0.85)
+                                new FollowPath(line2, true, 0.85)
                         )
                 ),
                 new Delay(0.25),
-                new FollowPath(line3, false, 0.3),
+                new FollowPath(line3, true, 0.3),
                 new Delay(0.25),
-                new FollowPath(line4, false, 0.85),
+                new FollowPath(line4, true, 0.85),
                 new Delay(0.25),
                 new ParallelGroup(
                         backTwo.INSTANCE.shootCycle(),
@@ -210,13 +199,13 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
                         new SequentialGroup(
                                 new Delay(1.5),
-                                new FollowPath(line5, false, 0.85)
+                                new FollowPath(line5, true, 0.85)
                         )
                 ),
                 new Delay(0.25),
-                new FollowPath(line6, false, 0.3),
+                new FollowPath(line6, true, 0.3),
                 new Delay(0.25),
-                new FollowPath(line7, false, 0.85),
+                new FollowPath(line7, true, 0.85),
                 new Delay(0.25),
                 new ParallelGroup(
                         backTwo.INSTANCE.shootCycle(),
@@ -227,13 +216,13 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
                         new SequentialGroup(
                                 new Delay(1.5),
-                                new FollowPath(line8, false, 0.85)
+                                new FollowPath(line8, true, 0.85)
                         )
                 ),
                 new Delay(0.25),
-                new FollowPath(line9, false, 0.3),
+                new FollowPath(line9, true, 0.3),
                 new Delay(0.25),
-                new FollowPath(line10, false, 0.85),
+                new FollowPath(line10, true, 0.85),
                 new Delay(0.25),
                 new ParallelGroup(
                         backTwo.INSTANCE.shootCycle(),
@@ -244,7 +233,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
                         new SequentialGroup(
                                 new Delay(1.5),
-                                new FollowPath(line11, false, 0.85)
+                                new FollowPath(line11, true, 0.85)
                         )
                 )
 
