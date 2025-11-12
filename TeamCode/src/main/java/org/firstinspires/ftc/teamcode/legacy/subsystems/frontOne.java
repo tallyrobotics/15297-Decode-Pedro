@@ -53,8 +53,7 @@ private frontOne() {}
     @Override
     public void initialize() {
         lift = new ServoEx(name);
-        lift.getServo().setDirection(Servo.Direction.REVERSE);
-    }
+        lift.getServo().setDirection(Servo.Direction.REVERSE);}
 
     @Override
     public void periodic() {

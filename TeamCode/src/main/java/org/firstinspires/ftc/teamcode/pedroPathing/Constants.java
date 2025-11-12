@@ -50,7 +50,7 @@ public class Constants {
             .strafePodX(-35.5/25.4)
             .forwardTicksToInches(0.0019607091)
             .strafeTicksToInches(0.0019603589)
-            .turnTicksToInches(0.0020123298);
+            .turnTicksToInches(0.0020178409346387613);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)

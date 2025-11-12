@@ -57,7 +57,7 @@ public class Decode_Teleop extends NextFTCOpMode {
 
     private final Double turbo = 1.0;
     private final Double normal = 0.75;
-    private final Double turtle = 0.5;
+    private final Double turtle = 0.3;
     private Double speed;
     private double shootRPM = 0.0;
 
@@ -66,7 +66,7 @@ public class Decode_Teleop extends NextFTCOpMode {
     @Override
     public void onInit() {
         speed = normal;
-        shootRPM = 1900.0;
+        shootRPM = 2000.0;
 
         leftFrontMotor = new MotorEx(leftFrontName);
         leftRearMotor = new MotorEx(leftRearName);
@@ -138,6 +138,16 @@ public class Decode_Teleop extends NextFTCOpMode {
         Gamepads.gamepad2().x().whenBecomesTrue(frontOne.INSTANCE.shootCycle());
         Gamepads.gamepad2().a().whenBecomesTrue(backTwo.INSTANCE.shootCycle());
 
+
+        Gamepads.gamepad2().rightTrigger().greaterThan(0.1).whenTrue(new InstantCommand(() -> {
+                    shootRPM = -400.0;
+            flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
+            flyRightShooter.INSTANCE.flySetRPM(shootRPM);
+                }
+                )
+        );
+
+
         Gamepads.gamepad2().b().whenBecomesTrue(
             new ParallelGroup(
                 backTwo.INSTANCE.shootCycle(),
@@ -149,26 +159,31 @@ public class Decode_Teleop extends NextFTCOpMode {
         );
 
         Gamepads.gamepad2().dpadDown().whenBecomesTrue(
-            new InstantCommand(() -> {
-                shootRPM -= 100.0;
-                flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
-                flyRightShooter.INSTANCE.flySetRPM(shootRPM);
-            }
-        ));
-//        Gamepads.gamepad2().dpadLeft().whenBecomesTrue(
-//            new InstantCommand(() -> {
-//                shootRPM = 200.0;
-//                flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
-//                flyRightShooter.INSTANCE.flySetRPM(shootRPM*2);
-//            }
-//        ));
-//        Gamepads.gamepad2().dpadRight().whenBecomesTrue(
-//            new InstantCommand(() -> {
-//                shootRPM = -300.0;
-//                flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
-//                flyRightShooter.INSTANCE.flySetRPM(shootRPM*2);
-//            }
-//        ));
+                new InstantCommand(() -> {
+                    shootRPM -= 100.0;
+                    flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
+                    flyRightShooter.INSTANCE.flySetRPM(shootRPM);
+                }
+                ));
+
+        Gamepads.gamepad2().dpadRight().whenBecomesTrue(
+                new InstantCommand(() -> {
+                    shootRPM = 2000.0;
+                    flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
+                    flyRightShooter.INSTANCE.flySetRPM(shootRPM);
+                }
+                ));
+
+        Gamepads.gamepad2().dpadLeft().whenBecomesTrue(
+                new InstantCommand(() -> {
+                    shootRPM = -5.0;
+                    flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
+                    flyRightShooter.INSTANCE.flySetRPM(shootRPM);
+                }
+                ));
+
+
+
         Gamepads.gamepad2().dpadUp().whenBecomesTrue(
             new InstantCommand(() -> {
                 shootRPM += 100.0;
@@ -179,8 +194,7 @@ public class Decode_Teleop extends NextFTCOpMode {
 
         flyRightShooter.INSTANCE.flySetRPM(shootRPM).schedule();
         flyLeftShooter.INSTANCE.flySetRPM(shootRPM).schedule();
-//        flyRightShooter.INSTANCE.getDefaultCommand().schedule();// .flySetRPM(shootRPM).schedule();
-//        flyLeftShooter.INSTANCE.getDefaultCommand().schedule();// .flySetRPM(shootRPM).schedule();
+
 
         intake.INSTANCE.IntakeIn().schedule();
     }
