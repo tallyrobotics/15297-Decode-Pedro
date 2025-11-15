@@ -14,8 +14,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyLeftShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyRightShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.backTwo;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.frontOne;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.backOne;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.frontTwo;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -169,10 +169,10 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 ),
                 new Delay(0.25),
                 new ParallelGroup(
-                        backTwo.INSTANCE.shootCycle(),
+                        backOne.INSTANCE.shootCycle(),
                         new SequentialGroup(
                                 new Delay(0.5),
-                                frontOne.INSTANCE.shootCycle()
+                                frontTwo.INSTANCE.shootCycle()
                         ),
 
                         new SequentialGroup(
@@ -186,10 +186,10 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 new FollowPath(line4, false, 0.85),
                 new Delay(0.25),
                 new ParallelGroup(
-                        backTwo.INSTANCE.shootCycle(),
+                        backOne.INSTANCE.shootCycle(),
                         new SequentialGroup(
                                 new Delay(0.5),
-                                frontOne.INSTANCE.shootCycle()
+                                frontTwo.INSTANCE.shootCycle()
                         ),
 
                         new SequentialGroup(
@@ -203,10 +203,10 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 new FollowPath(line7, false, 0.85),
                 new Delay(0.25),
                 new ParallelGroup(
-                        backTwo.INSTANCE.shootCycle(),
+                        backOne.INSTANCE.shootCycle(),
                         new SequentialGroup(
                                 new Delay(0.5),
-                                frontOne.INSTANCE.shootCycle()
+                                frontTwo.INSTANCE.shootCycle()
                         ),
 
                         new SequentialGroup(
@@ -220,10 +220,10 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 new FollowPath(line10, false, 0.85),
                 new Delay(0.25),
                 new ParallelGroup(
-                        backTwo.INSTANCE.shootCycle(),
+                        backOne.INSTANCE.shootCycle(),
                         new SequentialGroup(
                                 new Delay(0.5),
-                                frontOne.INSTANCE.shootCycle()
+                                frontTwo.INSTANCE.shootCycle()
                         ),
 
                         new SequentialGroup(

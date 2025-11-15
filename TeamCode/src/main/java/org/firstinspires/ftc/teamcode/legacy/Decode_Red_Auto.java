@@ -14,9 +14,8 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyLeftShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyRightShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.backTwo;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.frontOne;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.flyShooter;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.backOne;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.frontTwo;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -47,8 +46,8 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                 new SubsystemComponent(intake.INSTANCE),
                 new SubsystemComponent(flyRightShooter.INSTANCE),
                 new SubsystemComponent(flyLeftShooter.INSTANCE),
-                new SubsystemComponent(backTwo.INSTANCE),
-                new SubsystemComponent(frontOne.INSTANCE)
+                new SubsystemComponent(backOne.INSTANCE),
+                new SubsystemComponent(frontTwo.INSTANCE)
         );
     }
 
@@ -183,8 +182,8 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                 ),
                 new Delay(0.25),
                 new ParallelGroup(
-                        backTwo.INSTANCE.shootCycle(),
-                        frontOne.INSTANCE.shootCycle(),
+                        backOne.INSTANCE.shootCycle(),
+                        frontTwo.INSTANCE.shootCycle(),
 
                         new SequentialGroup(
                                 new Delay(1.5),
@@ -197,8 +196,8 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                 new FollowPath(line4, true, 0.6),
                 new Delay(0.25),
                 new ParallelGroup(
-                        backTwo.INSTANCE.shootCycle(),
-                        frontOne.INSTANCE.shootCycle()
+                        backOne.INSTANCE.shootCycle(),
+                        frontTwo.INSTANCE.shootCycle()
                         ,
 
                         new SequentialGroup(
@@ -212,8 +211,8 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                 new FollowPath(line7, true, 0.6),
                 new Delay(0.25),
                 new ParallelGroup(
-                        backTwo.INSTANCE.shootCycle(),
-                        frontOne.INSTANCE.shootCycle()
+                        backOne.INSTANCE.shootCycle(),
+                        frontTwo.INSTANCE.shootCycle()
                         ,
 
                         new SequentialGroup(
@@ -277,12 +276,12 @@ public class Decode_Red_Auto extends NextFTCOpMode {
         new InstantCommand(() -> {
             new SequentialGroup(
                     new ParallelGroup(
-                            backTwo.INSTANCE.up(),
-                            frontOne.INSTANCE.up()),
+                            backOne.INSTANCE.up(),
+                            frontTwo.INSTANCE.up()),
                     new Delay(1),
                     new ParallelGroup(
-                            backTwo.INSTANCE.down(),
-                            frontOne.INSTANCE.down()
+                            backOne.INSTANCE.down(),
+                            frontTwo.INSTANCE.down()
                     )
             );
             }).schedule();
