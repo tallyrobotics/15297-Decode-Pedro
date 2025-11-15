@@ -8,10 +8,10 @@ import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.positionable.SetPosition;
 
-public class backTwo implements Subsystem {
+public class backOne implements Subsystem {
 
-public static final backTwo INSTANCE = new backTwo();
-private backTwo() {}
+public static final backOne INSTANCE = new backOne();
+private backOne() {}
 
     public static final Double down = 0.0;
     public static final Double up = 1.0;
@@ -19,7 +19,7 @@ private backTwo() {}
     private boolean isUp = false;
 
     public ServoEx lift;
-    public String name = "backTwo";
+    public String name = "backOne";
 
     public Command toggle() {
         if (isUp) {
@@ -51,6 +51,6 @@ private backTwo() {}
     @Override
     public void initialize() {
         lift = new ServoEx(name);
-        lift.getServo().setDirection(Servo.Direction.FORWARD);
+        lift.getServo().setDirection(Servo.Direction.REVERSE);
     }
 }

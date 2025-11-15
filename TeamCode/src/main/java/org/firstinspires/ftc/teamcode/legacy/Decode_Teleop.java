@@ -4,12 +4,13 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.legacy.subsystems.backTwo;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.backOne;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyLeftShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyRightShooter;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.frontOne;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.frontTwo;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
@@ -35,8 +36,8 @@ public class Decode_Teleop extends NextFTCOpMode {
                 new SubsystemComponent(intake.INSTANCE),
                 new SubsystemComponent(flyRightShooter.INSTANCE),
                 new SubsystemComponent(flyLeftShooter.INSTANCE),
-                new SubsystemComponent(backTwo.INSTANCE),
-                new SubsystemComponent(frontOne.INSTANCE),
+                new SubsystemComponent(backOne.INSTANCE),
+                new SubsystemComponent(frontTwo.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
@@ -135,8 +136,8 @@ public class Decode_Teleop extends NextFTCOpMode {
 
         Gamepads.gamepad2().y().whenBecomesTrue(intake.INSTANCE.IntakeOff());
 
-        Gamepads.gamepad2().x().whenBecomesTrue(frontOne.INSTANCE.shootCycle());
-        Gamepads.gamepad2().a().whenBecomesTrue(backTwo.INSTANCE.shootCycle());
+        Gamepads.gamepad2().x().whenBecomesTrue(frontTwo.INSTANCE.shootCycle());
+        Gamepads.gamepad2().a().whenBecomesTrue(backOne.INSTANCE.shootCycle());
 
 
         Gamepads.gamepad2().rightTrigger().greaterThan(0.1).whenTrue(new InstantCommand(() -> {
@@ -150,12 +151,12 @@ public class Decode_Teleop extends NextFTCOpMode {
 
         Gamepads.gamepad2().b().whenBecomesTrue(
             new ParallelGroup(
-                backTwo.INSTANCE.shootCycle(),
-//                new SequentialGroup(
-//                    new Delay(0.5),
-                    frontOne.INSTANCE.shootCycle()
+                frontTwo.INSTANCE.shootCycle(),
+                new SequentialGroup(
+                    new Delay(0.1),
+                    backOne.INSTANCE.shootCycle()
                 )
-//            )
+            )
         );
 
         Gamepads.gamepad2().dpadDown().whenBecomesTrue(

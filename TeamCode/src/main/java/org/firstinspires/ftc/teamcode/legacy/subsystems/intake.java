@@ -29,7 +29,7 @@ public class intake implements Subsystem {
 
     @Override
     public void initialize() {
-        intake = new MotorEx(intakeName).reversed();
+        intake = new MotorEx(intakeName); //.reversed();
     }
 
     @Override
