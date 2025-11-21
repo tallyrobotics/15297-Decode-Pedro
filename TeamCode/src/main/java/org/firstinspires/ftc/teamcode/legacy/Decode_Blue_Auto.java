@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.legacy;
 
-import static dev.nextftc.extensions.pedro.PedroComponent.follower;
-
-import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.pedropathing.geometry.BezierCurve;
+import com.pedropathing.geometry.BezierLine;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.Servo;
+
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
@@ -27,10 +27,15 @@ import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
 import dev.nextftc.core.commands.groups.ParallelGroup;
 import dev.nextftc.core.commands.groups.SequentialGroup;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
+import dev.nextftc.hardware.impl.ServoEx;
+
+import static dev.nextftc.extensions.pedro.PedroComponent.follower;
+
 
 
 @Autonomous(name = "Decode Blue Auto")
@@ -40,17 +45,25 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 new PedroComponent(Constants::createFollower),
                 new SubsystemComponent(intake.INSTANCE),
                 new SubsystemComponent(flyRightShooter.INSTANCE),
-                new SubsystemComponent(flyLeftShooter.INSTANCE)
+                new SubsystemComponent(flyLeftShooter.INSTANCE),
+                new SubsystemComponent(backOne.INSTANCE),
+                new SubsystemComponent(frontTwo.INSTANCE)
         );
     }
+
+    public ServoEx bT;
+    public ServoEx fO;
+    public String frontTwoName = "frontTwo";
+    public String backOneName = "backOne";
+
 
 
 //    private Follower follower;
 
-    private final Pose startPose = new Pose(23.3, 128.6, Math.toRadians(53.2));
-    private final Pose shootPose = new Pose(56, 100, Math.toRadians(53.2));
+    private final Pose startPose = new Pose(23.1, 127.7, Math.toRadians(52.0));
+    private final Pose shootPose = new Pose(32.5, 118, Math.toRadians(52.0));
 
-    private final int shootRPM = 1000;
+    private final int shootRPM = 2000; //2000 without
 
 
     boolean USE_WEBCAM;
@@ -62,99 +75,99 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
 
     public void buildPaths() {
 
-       line1 = follower().pathBuilder()
-               .addPath(
-                       new BezierLine(startPose, shootPose)
-               )
-               .setConstantHeadingInterpolation(Math.toRadians(53.2))
-               .build();
-
-       line2 = follower()
-                .pathBuilder()
+        line1 = follower().pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose, new Pose(44.000, 83.500))
+                        new BezierLine(startPose, shootPose)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(53.2), Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(52.0))
                 .build();
 
-       line3 = follower()
+        line2 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(44.000, 83.500), new Pose(19.000, 83.500))
+                        new BezierLine(shootPose, new Pose(44.000, 87.000))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(52.0), Math.toRadians(180))
                 .build();
 
-       line4 = follower()
+        line3 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(19.000, 83.500), shootPose)
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(53.2))
-                .build();
-
-       line5 = follower()
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(shootPose, new Pose(45.000, 60.000))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(53.2), Math.toRadians(180))
-                .build();
-
-       line6 = follower()
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(45.000, 60.000), new Pose(19.000, 60.000))
+                        new BezierLine(new Pose(44.000, 87.000), new Pose(19.000, 87.000))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
-       line7 = follower()
+        line4 = follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(19.000, 87.000), shootPose)
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(54.0))
+                .build();
+
+        line5 = follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(shootPose, new Pose(49.000, 61.500))
+                )
+                .setLinearHeadingInterpolation(Math.toRadians(54.0), Math.toRadians(180))
+                .build();
+
+        line6 = follower()
+                .pathBuilder()
+                .addPath(
+                        new BezierLine(new Pose(49.000, 61.500), new Pose(14.000, 61.500))
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+
+        line7 = follower()
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(19.000, 60.000),
-                                new Pose(39.576, 56.424),
+                                new Pose(14.000, 61.500),
+                                new Pose(41.784, 57.130),
                                 shootPose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(53.2))
+                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(54.0))
                 .build();
 
-       line8 = follower()
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(shootPose, new Pose(46.000, 36.500))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(53.2), Math.toRadians(180))
-                .build();
+//        line8 = follower()
+//                .pathBuilder()
+//                .addPath(
+//                        new BezierLine(new Pose(33.000, 118), new Pose(98.000, 38.000))
+//                )
+//                .setLinearHeadingInterpolation(Math.toRadians(54.0), Math.toRadians(0))
+//                .build();
+//
+//        line9 = follower()
+//                .pathBuilder()
+//                .addPath(
+//                        new BezierLine(new Pose(98.000, 38.000), new Pose(130.000, 38.000))
+//                )
+//                .setConstantHeadingInterpolation(Math.toRadians(0))
+//                .build();
+//
+//        line10 = follower()
+//                .pathBuilder()
+//                .addPath(
+//                        new BezierCurve(
+//                                new Pose(130.000, 38.000),
+//                                new Pose(104.720, 33.222),
+//                                shootPose
+//                        )
+//                )
+//                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(308.0))
+//                .build();
 
-       line9 = follower()
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(46.000, 36.500), new Pose(19.000, 36.500))
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .build();
-
-       line10 = follower()
-                .pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Pose(19.000, 36.500),
-                                new Pose(32.131, 34.678),
-                                shootPose
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(53.2))
-                .build();
-
-       line11 = follower()
+        line11 = follower()
                 .pathBuilder()
                 .addPath(
                         new BezierLine(shootPose, new Pose(21.000, 97.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(53.2), Math.toRadians(-45))
+                .setLinearHeadingInterpolation(Math.toRadians(54.0), Math.toRadians(315))
                 .build();
 
     }
@@ -163,79 +176,81 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
         return new SequentialGroup(
                 new ParallelGroup(
                         intake.INSTANCE.IntakeIn(),
-//                        flyLeftShooter.INSTANCE.flySetRPM(shootRPM),
-//                        flyRightShooter.INSTANCE.flySetRPM(shootRPM),
-                        new FollowPath(line1, false, 0.85)
+                        flyLeftShooter.INSTANCE.flySetRPM(shootRPM),
+                        flyRightShooter.INSTANCE.flySetRPM(shootRPM),
+                        new FollowPath(line1, true, 0.6)
                 ),
                 new Delay(0.25),
                 new ParallelGroup(
-                        backOne.INSTANCE.shootCycle(),
+                        frontTwo.INSTANCE.shootCycle(),
                         new SequentialGroup(
-                                new Delay(0.5),
-                                frontTwo.INSTANCE.shootCycle()
-                        ),
+                                new Delay(0.15),
+                                backOne.INSTANCE.shootCycle()),
+
 
                         new SequentialGroup(
                                 new Delay(1.5),
-                                new FollowPath(line2, false, 0.85)
+                                new FollowPath(line2, true, 0.6)
                         )
                 ),
                 new Delay(0.25),
-                new FollowPath(line3, false, 0.3),
+                new FollowPath(line3, true, 0.25),
                 new Delay(0.25),
-                new FollowPath(line4, false, 0.85),
+                new FollowPath(line4, true, 0.6),
                 new Delay(0.25),
                 new ParallelGroup(
-                        backOne.INSTANCE.shootCycle(),
+                        frontTwo.INSTANCE.shootCycle(),
                         new SequentialGroup(
-                                new Delay(0.5),
-                                frontTwo.INSTANCE.shootCycle()
-                        ),
+                                new Delay(0.15),
+                                backOne.INSTANCE.shootCycle()),
+
 
                         new SequentialGroup(
                                 new Delay(1.5),
-                                new FollowPath(line5, false, 0.85)
+                                new FollowPath(line5, true, 0.6)
                         )
                 ),
                 new Delay(0.25),
-                new FollowPath(line6, false, 0.3),
+                new FollowPath(line6, true, 0.25),
                 new Delay(0.25),
-                new FollowPath(line7, false, 0.85),
-                new Delay(0.25),
+                new FollowPath(line7, true, 0.5),
+                new Delay(1.0),
                 new ParallelGroup(
-                        backOne.INSTANCE.shootCycle(),
+                        frontTwo.INSTANCE.shootCycle(),
                         new SequentialGroup(
-                                new Delay(0.5),
-                                frontTwo.INSTANCE.shootCycle()
-                        ),
+                                new Delay(0.15),
+                                backOne.INSTANCE.shootCycle()),
+
 
                         new SequentialGroup(
                                 new Delay(1.5),
-                                new FollowPath(line8, false, 0.85)
+                                new FollowPath(line11, true, 0.6)
                         )
-                ),
-                new Delay(0.25),
-                new FollowPath(line9, false, 0.3),
-                new Delay(0.25),
-                new FollowPath(line10, false, 0.85),
-                new Delay(0.25),
-                new ParallelGroup(
-                        backOne.INSTANCE.shootCycle(),
-                        new SequentialGroup(
-                                new Delay(0.5),
-                                frontTwo.INSTANCE.shootCycle()
-                        ),
 
-                        new SequentialGroup(
-                                new Delay(1.5),
-                                new FollowPath(line11, false, 0.85)
-                        )
+//                ),
+//                new Delay(0.25),
+//                new FollowPath(line9, true, 0.3),
+//                new Delay(0.25),
+//                new FollowPath(line10, true, 0.85),
+//                new Delay(0.25),
+//                new ParallelGroup(
+//                        backTwo.INSTANCE.shootCycle(),
+//                        frontOne.INSTANCE.shootCycle()
+//                        ,
+//
+//                        new SequentialGroup(
+//                                new Delay(1.5),
+//                                new FollowPath(line11, true, 1.0)
+//                        )
                 )
 
         );
 
 
     }
+
+
+
 
     /** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
     @Override
@@ -255,7 +270,13 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
     /** This method is called once at the init of the OpMode. **/
     @Override
     public void onInit() {
+        bT = new ServoEx(frontTwoName);
+        bT.getServo().setDirection(Servo.Direction.FORWARD);
+        fO = new ServoEx(backOneName);
+        fO.getServo().setDirection(Servo.Direction.REVERSE);
 
+        bT.setPosition(0.05);
+        fO.setPosition(0.05);
 
 
 //        follower = Constants.createFollower(hardwareMap);
@@ -263,8 +284,21 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
         follower().setStartingPose(startPose);
         buildPaths();
 
+        new InstantCommand(() -> {
+            new SequentialGroup(
+                    new ParallelGroup(
+                            backOne.INSTANCE.up(),
+                            frontTwo.INSTANCE.up()),
+                    new Delay(1),
+                    new ParallelGroup(
+                            backOne.INSTANCE.down(),
+                            frontTwo.INSTANCE.down()
+                    )
+            );
+        }).schedule();
 
-        USE_WEBCAM = false;
+
+        USE_WEBCAM = true;
         // Initialize AprilTag before waitForStart.
         initAprilTag();
         // Wait for the match to begin.
@@ -288,6 +322,8 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
 
+        bT.setPosition(0.0);
+        fO.setPosition(0.0);
 
         doAuto().schedule();
     }
