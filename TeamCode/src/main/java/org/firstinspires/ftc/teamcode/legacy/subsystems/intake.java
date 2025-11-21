@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.hardware.impl.CRServoEx;
 import dev.nextftc.hardware.impl.MotorEx;
+import dev.nextftc.hardware.positionable.SetPosition;
 import dev.nextftc.hardware.powerable.SetPower;
 
 public class intake implements Subsystem {
@@ -12,7 +17,7 @@ public class intake implements Subsystem {
     private intake() {
     }
 
-    public MotorEx intake;
+    public CRServoEx intake;
     public String intakeName = "intake";
 
     public Command IntakeIn() {
@@ -29,7 +34,8 @@ public class intake implements Subsystem {
 
     @Override
     public void initialize() {
-        intake = new MotorEx(intakeName); //.reversed();
+        intake = new CRServoEx(intakeName);
+        intake.getServo().setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     @Override
