@@ -13,7 +13,7 @@ public class flyLeftShooter extends flyShooter {// implements Subsystem {
     public static final flyLeftShooter INSTANCE = new flyLeftShooter("flyLeft", true);
 
     public flyLeftShooter(String motorName, boolean reverseMotor) {
-        super(motorName, reverseMotor);
+        super(motorName, reverseMotor, 200);
     }
 
 //    private flyLeftShooter() {}

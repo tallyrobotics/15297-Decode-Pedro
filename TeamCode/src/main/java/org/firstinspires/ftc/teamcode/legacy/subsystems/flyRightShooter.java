@@ -13,7 +13,9 @@ public class flyRightShooter extends flyShooter { //} Subsystem {
     public static final flyRightShooter INSTANCE = new flyRightShooter("flyRight", true);
 
     public flyRightShooter(String motorName, boolean reverseMotor) {
-        super(motorName, reverseMotor);
+        super(motorName, reverseMotor, -200);
+
+
     }
 //    public static final flyRightShooter INSTANCE = new flyRightShooter();
 //
