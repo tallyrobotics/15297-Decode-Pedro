@@ -18,11 +18,12 @@ public abstract class flyShooter implements Subsystem {
 //    public static final flyShooter INSTANCE = new flyShooter();
 
 //    private flyShooter() {}
-    public flyShooter(String motorName, boolean reverseMotor) {flyMotorName = motorName; flyReverseMotor = reverseMotor;}
+    public flyShooter(String motorName, boolean reverseMotor, int offset) {flyMotorName = motorName; flyReverseMotor = reverseMotor; addage = offset;}
 
     public MotorEx flyMotor;
     private final String flyMotorName;
     private final boolean flyReverseMotor;
+    private final int addage;
 
 //    private double targetTPS = 0;
     private double targetRPM = 0;
@@ -50,7 +51,7 @@ public abstract class flyShooter implements Subsystem {
 //        return new InstantCommand(() -> targetTPS = ((targetRPM*28)/60)*2.89); // 3:1 = 2.89:1
 //        targetTPS = ((targetRPM*28)/60)*2.89; // 3:1 = 2.89:1
 //        return new RunToVelocity(controlSystem, targetTPS, 5).requires(this);
-        targetRPM = rpm;
+        targetRPM = rpm+addage;
         return new NullCommand();
     }
 

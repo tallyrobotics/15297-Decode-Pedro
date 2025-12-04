@@ -9,10 +9,10 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
 
-public class frontTwo implements Subsystem {
+public class front implements Subsystem {
 
-public static final frontTwo INSTANCE = new frontTwo();
-private frontTwo() {}
+public static final front INSTANCE = new front();
+private front() {}
 
     public static final Double down = 0.0;
     public static final Double up = 1.0;
@@ -20,7 +20,7 @@ private frontTwo() {}
     private boolean isUp = false;
 
     public ServoEx lift;
-    public String name = "frontTwo";
+    public String name = "front";
 
     public Command toggle() {
         if (isUp) {

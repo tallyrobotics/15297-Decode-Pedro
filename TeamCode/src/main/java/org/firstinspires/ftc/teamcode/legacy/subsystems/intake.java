@@ -17,7 +17,7 @@ public class intake implements Subsystem {
     private intake() {
     }
 
-    public CRServoEx intake;
+    public MotorEx intake;
     public String intakeName = "intake";
 
     public Command IntakeIn() {
@@ -34,8 +34,8 @@ public class intake implements Subsystem {
 
     @Override
     public void initialize() {
-        intake = new CRServoEx(intakeName);
-        intake.getServo().setDirection(DcMotorSimple.Direction.REVERSE);
+        intake = new MotorEx(intakeName);
+        intake.getMotor().setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     @Override
