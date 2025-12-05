@@ -5,15 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.legacy.subsystems.backLED;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.back;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.backLauncher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyLeftShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyRightShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.frontLED;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.front;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.frontLauncher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.middle;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.middleLauncher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.middleLED;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.rpmLED;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import dev.nextftc.core.commands.delays.Delay;
@@ -48,9 +47,9 @@ public class Decode_Teleop extends NextFTCOpMode {
                 new SubsystemComponent(intake.INSTANCE),
                 new SubsystemComponent(flyRightShooter.INSTANCE),
                 new SubsystemComponent(flyLeftShooter.INSTANCE),
-                new SubsystemComponent(back.INSTANCE),
-                new SubsystemComponent(middle.INSTANCE),
-                new SubsystemComponent(front.INSTANCE),
+                new SubsystemComponent(backLauncher.INSTANCE),
+                new SubsystemComponent(middleLauncher.INSTANCE),
+                new SubsystemComponent(frontLauncher.INSTANCE),
                 new SubsystemComponent(frontLED.INSTANCE),
                 new SubsystemComponent(middleLED.INSTANCE),
                 new SubsystemComponent(backLED.INSTANCE),
@@ -85,8 +84,7 @@ public class Decode_Teleop extends NextFTCOpMode {
     String x;
 
 //    public DcMotorEx flyLeft;
-
-    public IMUEx imu = new IMUEx("imu", Direction.BACKWARD,Direction.UP);
+//    public IMUEx imu = new IMUEx("imu", Direction.BACKWARD,Direction.UP);
 
     private final Double turbo = 1.0;
     private final Double normal = 0.75;
@@ -211,9 +209,9 @@ public class Decode_Teleop extends NextFTCOpMode {
 
         Gamepads.gamepad2().y().whenBecomesTrue(intake.INSTANCE.IntakeOff());
 
-        Gamepads.gamepad1().x().whenBecomesTrue(front.INSTANCE.shootCycle());
-        Gamepads.gamepad1().a().whenBecomesTrue(middle.INSTANCE.shootCycle());
-        Gamepads.gamepad1().b().whenBecomesTrue(back.INSTANCE.shootCycle());
+        Gamepads.gamepad1().x().whenBecomesTrue(frontLauncher.INSTANCE.shootCycle());
+        Gamepads.gamepad1().a().whenBecomesTrue(middleLauncher.INSTANCE.shootCycle());
+        Gamepads.gamepad1().b().whenBecomesTrue(backLauncher.INSTANCE.shootCycle());
 
 
         Gamepads.gamepad2().rightTrigger().greaterThan(0.1).whenTrue(new InstantCommand(() -> {
@@ -230,15 +228,15 @@ public class Decode_Teleop extends NextFTCOpMode {
 
                     new SequentialGroup(
                             new Delay(0.1),
-                            front.INSTANCE.shootCycle()
+                            frontLauncher.INSTANCE.shootCycle()
                     ),
                     new SequentialGroup(
                             new Delay(0.00),
-                            middle.INSTANCE.shootCycle()
+                            middleLauncher.INSTANCE.shootCycle()
                     ),
                     new SequentialGroup(
                             new Delay(0.1),
-                            back.INSTANCE.shootCycle()
+                            backLauncher.INSTANCE.shootCycle()
                     )
 
 

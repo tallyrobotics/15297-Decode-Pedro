@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.opMode;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -19,12 +18,10 @@ import dev.nextftc.hardware.positionable.SetPosition;
 
 public abstract class LED implements Subsystem {
 
-
     public LED(String ledName, String colorSenseName, String distSenseName) {
         LEDname = ledName;
         colSenName = colorSenseName;
         distanceName = distSenseName;
-
     }
 
     public ServoEx led;
@@ -37,9 +34,21 @@ public abstract class LED implements Subsystem {
     private static final Double red = 0.285;
     private static final Double yellow = 0.41;
     private static final Double green = 0.56;
+    private static final Double blue = 0.60;
     private static final Double purple = 0.77;
 
-    public String color;
+    private String color = "off";
+    private double distance = -1.0;
+
+    public String getColor()
+    {
+        return color;
+    }
+
+    public double getDistance()
+    {
+        return distance;
+    }
 
     public Command Off() {
         color = "off";
@@ -56,6 +65,11 @@ public abstract class LED implements Subsystem {
         return new SetPosition(led, yellow);
     }
 
+    public Command Blue() {
+        color = "blue";
+        return new SetPosition(led, blue);
+    }
+
     public Command Green() {
         color = "green";
         return new SetPosition(led, green);
@@ -67,56 +81,61 @@ public abstract class LED implements Subsystem {
     }
 
     @Override
-    public void initialize() {
+    public void initialize()
+    {
         led = new ServoEx(LEDname);
-        colSensor = ActiveOpMode.hardwareMap().get(ColorSensor.class, colSenName);
-        colorDistanceSensor = ActiveOpMode.hardwareMap().get(DistanceSensor.class, distanceName);
+        if (!"".equals(colSenName))
+        {
+            colSensor = ActiveOpMode.hardwareMap().get(ColorSensor.class, colSenName);
+        }
+        if (!"".equals(distanceName))
+        {
+            colorDistanceSensor = ActiveOpMode.hardwareMap().get(DistanceSensor.class, distanceName);
+        }
     }
 
     @Override
-    public void periodic() {
-        NormalizedRGBA myNormalizedColors;
-        int myColor;
-        float hue;
-        float saturation;
-        float value;
-        double gotDistance;
+    public void periodic()
+    {
+        if (!"".equals(colSenName)) {
+            NormalizedRGBA myNormalizedColors;
+            int myColor;
+//        float hue;
+//        float saturation;
+//        float value;
 
-        // Save the color sensor data as a normalized color value. It's recommended
-        // to use Normalized Colors over color sensor colors is because Normalized
-        // Colors consistently gives values between 0 and 1, while the direct
-        // Color Sensor colors are dependent on the specific sensor you're using.
+            // Save the color sensor data as a normalized color value. It's recommended
+            // to use Normalized Colors over color sensor colors is because Normalized
+            // Colors consistently gives values between 0 and 1, while the direct
+            // Color Sensor colors are dependent on the specific sensor you're using.
             myNormalizedColors = ((NormalizedColorSensor) colSensor).getNormalizedColors();
             // Convert the normalized color values to an Android color value.
             myColor = myNormalizedColors.toColor();
             // Use the Android color value to calculate the Hue, Saturation and Value color variables.
             // See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html for an explanation of HSV color.
-            hue = JavaUtil.colorToHue(myColor);
-            saturation = JavaUtil.colorToSaturation(myColor);
-            value = JavaUtil.colorToValue(myColor);
+//        hue = JavaUtil.colorToHue(myColor);
+//        saturation = JavaUtil.colorToSaturation(myColor);
+//        value = JavaUtil.colorToValue(myColor);
             // Use telemetry to display feedback on the driver station. We show the red,
             // green, and blue normalized values from the sensor (in the range of 0 to
             // 1), as well as the equivalent HSV (hue, saturation and value) values.
-            gotDistance = Double.parseDouble(JavaUtil.formatNumber(colorDistanceSensor.getDistance(DistanceUnit.CM), 3));
+            distance = Double.parseDouble(JavaUtil.formatNumber(colorDistanceSensor.getDistance(DistanceUnit.CM), 1));
             // If this color sensor also has a distance sensor, display the measured distance.
             // Note that the reported distance is only useful at very close
             // range, and is impacted by ambient light and surface reflectivity.
-//        telemetry.addData("distance (cm)" + location, gotDistance);
-        if (myNormalizedColors.green >= myNormalizedColors.red && myNormalizedColors.green >= myNormalizedColors.blue) {
-            Green();
-        } else if (myNormalizedColors.blue >= myNormalizedColors.red && myNormalizedColors.blue >= myNormalizedColors.blue) {
-            Red();
-        } else {
-            Off();
+            ActiveOpMode.telemetry().addData(colSenName + " distance (cm)", distance);
+            if (distance < 5.0) {
+                if (myNormalizedColors.green >= myNormalizedColors.red && myNormalizedColors.green >= myNormalizedColors.blue) {
+                    Green();
+                } else if (myNormalizedColors.blue >= myNormalizedColors.red && myNormalizedColors.blue >= myNormalizedColors.green) {
+                    Purple();
+                } else {
+                    Off();
+                }
+            } else {
+                Off();
+            }
         }
-
-
-
     }
-
-
-
-
-
 }
 
