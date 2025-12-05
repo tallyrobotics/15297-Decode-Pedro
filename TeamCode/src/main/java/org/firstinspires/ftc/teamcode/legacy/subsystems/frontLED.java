@@ -7,10 +7,10 @@ import dev.nextftc.hardware.positionable.SetPosition;
 
 public class frontLED extends LED {
 
-    public static final frontLED INSTANCE = new frontLED("ledFront");
+    public static final frontLED INSTANCE = new frontLED("ledFront", "colorFront", "colorFront");
 
-    public frontLED(String ledName) {
-        super(ledName, "","");
+    public frontLED(String ledName, String colorName, String distanceName) {
+        super(ledName, colorName,distanceName);
     }
 
 

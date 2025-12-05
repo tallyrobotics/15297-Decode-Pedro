@@ -62,39 +62,27 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                 new SubsystemComponent(front.INSTANCE),
                 new SubsystemComponent(frontLED.INSTANCE),
                 new SubsystemComponent(middleLED.INSTANCE),
-                new SubsystemComponent(backLED.INSTANCE),
-                new SubsystemComponent(rpmLED.INSTANCE)
+                new SubsystemComponent(backLED.INSTANCE)
         );
     }
 
-    public ServoEx bT;
-    public ServoEx fO;
-    public String frontTwoName = "frontTwo";
-    public String backOneName = "backOne";
+    public ServoEx b;
+    public ServoEx f;
+    public ServoEx m;
+    public String frontName = "front";
+    public String backName = "back";
+    public String midName = "middle";
 
-    private ColorSensor colorFront;
-    private ColorSensor colorMid;
-    private ColorSensor colorBack;
-    private LED ledMidRed;
-    private LED ledMidGreen;
-    private LED ledBackRed;
-    private LED ledBackGreen;
-    private LED ledFrontRed;
-    private LED ledFrontGreen;
-    private DistanceSensor colorFront_DistanceSensor;
-    private DistanceSensor colorMid_DistanceSensor;
-    private DistanceSensor colorBack_DistanceSensor;
-    int gain;
     int aprilValue;
 
 
 
 //    private Follower follower;
 
-    private final Pose startPose = new Pose(120.9, 127.7, Math.toRadians(308.0));
-    private final Pose shootPose = new Pose(111.5, 118, Math.toRadians(308.0));
+    private final Pose startPose = new Pose(120.643, 130, Math.toRadians(-51.0));
+    private final Pose shootPose = new Pose(114.5, 123.6, Math.toRadians(-58.0));
 
-    private final int shootRPM = 2000; //2000 without
+    private final int shootRPM = 1700; //2000 without
 
 
     boolean USE_WEBCAM;
@@ -102,7 +90,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
     VisionPortal myVisionPortal;
 
 
-    private PathChain line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11;
+    private PathChain line1, line2, line3, line4, line5, line6, line7, line8;
 
     public void buildPaths() {
 
@@ -110,95 +98,67 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                        .addPath(
                                new BezierLine(startPose, shootPose)
                        )
-                       .setConstantHeadingInterpolation(Math.toRadians(308.0))
+                       .setConstantHeadingInterpolation(Math.toRadians(-51.0))
                        .build();
 
         line2 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose, new Pose(100.000, 85.5))
+                        new BezierLine(shootPose, new Pose(98.000, 83.750+6.5))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(308.0), Math.toRadians(-4))
+                .setLinearHeadingInterpolation(Math.toRadians(-51.0), Math.toRadians(0.0))
                 .build();
 
         line3 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(100.000, 85.5), new Pose(125.000, 85.5))
+                        new BezierLine(new Pose(98.000, 83.750+6.5), new Pose(120.000, 83.750+6.5))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(-4))
+                .setConstantHeadingInterpolation(Math.toRadians(0.0))
                 .build();
 
         line4 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(125.000, 85.5), shootPose)
+                        new BezierLine(new Pose(124.000, 83.750+6.5), shootPose)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-4), Math.toRadians(298.0))
+                .setLinearHeadingInterpolation(Math.toRadians(0.0), Math.toRadians(-56.0))
                 .build();
 
         line5 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose, new Pose(95.000, 61.000))
+                        new BezierLine(shootPose, new Pose(98.000, 59.750+6.5))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(298.0), Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(-56.0), Math.toRadians(0.0))
                 .build();
 
         line6 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(95.000, 61.000), new Pose(130.000, 61.000))
+                        new BezierLine(new Pose(98.000, 59.750+6.5), new Pose(120.000, 59.750+6.5))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(0.0))
                 .build();
 
         line7 = follower()
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(130.000, 61.000),
-                                new Pose(102.216, 57.130),
+                                new Pose(124.000, 59.750+6.5),
+                                new Pose(109.100, 55.600+6.5),
                                 shootPose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(295.0))
+                .setLinearHeadingInterpolation(Math.toRadians(0.0), Math.toRadians(-56.0))
                 .build();
 
         line8 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(111, 118), new Pose(98.000, 38.000))
+                        new BezierLine(shootPose, new Pose(124.300, 101.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(298.0), Math.toRadians(0))
-                .build();
-
-        line9 = follower()
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(new Pose(98.000, 38.000), new Pose(130.000, 38.000))
-                )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .build();
-
-        line10 = follower()
-                .pathBuilder()
-                .addPath(
-                        new BezierCurve(
-                                new Pose(130.000, 38.000),
-                                new Pose(104.720, 33.222),
-                                shootPose
-                        )
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(308.0))
-                .build();
-
-        line11 = follower()
-                .pathBuilder()
-                .addPath(
-                        new BezierLine(shootPose, new Pose(123.000, 97.000))
-                )
-                .setLinearHeadingInterpolation(Math.toRadians(295.0), Math.toRadians(225))
+                .setLinearHeadingInterpolation(Math.toRadians(-56.0), Math.toRadians(-144.0))
                 .build();
 
     }
@@ -209,7 +169,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                         intake.INSTANCE.IntakeIn(),
                         flyLeftShooter.INSTANCE.flySetRPM(shootRPM),
                         flyRightShooter.INSTANCE.flySetRPM(shootRPM),
-                        new FollowPath(line1, true, 0.6)
+                        new FollowPath(line1, true, 0.7)
                 ),
                 new Delay(0.25),
                 new ParallelGroup(
@@ -217,54 +177,40 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
 
                         new SequentialGroup(
-                                new Delay(2.0),
-                                new FollowPath(line2, true, 0.6)
-                ),
+                                new Delay(3.0),
+                                new FollowPath(line2, true, 0.7)
+                                )
+                        ),
                 new Delay(0.25),
-                new FollowPath(line3, true, 0.25),
+                new FollowPath(line3, true, 0.3),
                 new Delay(0.25),
-                new FollowPath(line4, true, 0.6),
+                new FollowPath(line4, true, 0.7),
                 new Delay(0.25),
                 new ParallelGroup(
                         ShootPattern(),
 
 
                         new SequentialGroup(
-                                new Delay(2.0),
-                                new FollowPath(line5, true, 0.6)
+                                new Delay(3.0),
+                                new FollowPath(line5, true, 0.7)
                         )
                 ),
                 new Delay(0.25),
-                new FollowPath(line6, true, 0.25),
+                new FollowPath(line6, true, 0.3),
                 new Delay(0.25),
-                new FollowPath(line7, true, 0.5),
+                new FollowPath(line7, true, 0.7),
                 new Delay(1.0),
                 new ParallelGroup(
                         ShootPattern(),
 
 
                         new SequentialGroup(
-                                new Delay(2.0),
-                                new FollowPath(line11, true, 0.6)
+                                new Delay(3.0),
+                                new FollowPath(line8, true, 1.0)
                         )
                 )
 
-//                ),
-//                new Delay(0.25),
-//                new FollowPath(line9, true, 0.3),
-//                new Delay(0.25),
-//                new FollowPath(line10, true, 0.85),
-//                new Delay(0.25),
-//                new ParallelGroup(
-//                        backTwo.INSTANCE.shootCycle(),
-//                        frontOne.INSTANCE.shootCycle()
-//                        ,
-//
-//                        new SequentialGroup(
-//                                new Delay(1.5),
-//                                new FollowPath(line11, true, 1.0)
-//                        )
-                )
+
 
         );
 
@@ -282,13 +228,9 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
         telemetry.addData("x", follower().getPose().getX());
         telemetry.addData("y", follower().getPose().getY());
-        telemetry.addData("heading", follower().getPose().getHeading());
-        ((NormalizedColorSensor) colorFront).setGain(gain);
-        // Tell the sensor our desired gain value (normally you would do this during initialization, not during the loop)
-        ((NormalizedColorSensor) colorMid).setGain(gain);
-        // Tell the sensor our desired gain value (normally you would do this during initialization, not during the loop)
-        ((NormalizedColorSensor) colorBack).setGain(gain);
-        if(getColor("F")!=""&&getColor("M")!=""&&getColor("B")!=""){
+        telemetry.addData("heading", Math.toRadians(follower().getPose().getHeading()));
+
+        if(frontLED.INSTANCE.color=="off"&&middleLED.INSTANCE.color=="off"&&backLED.INSTANCE.color=="off"){
             intake.INSTANCE.IntakeOff().schedule();
         }
         else{
@@ -300,29 +242,16 @@ public class Decode_Red_Auto extends NextFTCOpMode {
     /** This method is called once at the init of the OpMode. **/
     @Override
     public void onInit() {
-        bT = new ServoEx(frontTwoName);
-        bT.getServo().setDirection(Servo.Direction.FORWARD);
-        fO = new ServoEx(backOneName);
-        fO.getServo().setDirection(Servo.Direction.REVERSE);
+        b = new ServoEx(backName);
+        b.getServo().setDirection(Servo.Direction.FORWARD);
+        f = new ServoEx(frontName);
+        f.getServo().setDirection(Servo.Direction.FORWARD);
+        m = new ServoEx(midName);
+        m.getServo().setDirection(Servo.Direction.REVERSE);
 
-        bT.setPosition(0.05);
-        fO.setPosition(0.05);
-
-
-
-        colorFront = hardwareMap.get(ColorSensor.class, "colorFront");
-        colorMid = hardwareMap.get(ColorSensor.class, "colorMid");
-        colorBack = hardwareMap.get(ColorSensor.class, "colorBack");
-        ledMidRed = hardwareMap.get(LED.class, "ledMidRed");
-        ledMidGreen = hardwareMap.get(LED.class, "ledMidGreen");
-        ledBackRed = hardwareMap.get(LED.class, "ledBackRed");
-        ledBackGreen = hardwareMap.get(LED.class, "ledBackGreen");
-        ledFrontRed = hardwareMap.get(LED.class, "ledFrontRed");
-        ledFrontGreen = hardwareMap.get(LED.class, "ledFrontGreen");
-        colorFront_DistanceSensor = hardwareMap.get(DistanceSensor.class, "colorFront");
-        colorMid_DistanceSensor = hardwareMap.get(DistanceSensor.class, "colorMid");
-        colorBack_DistanceSensor = hardwareMap.get(DistanceSensor.class, "colorBack");
-        gain = 10;
+        b.setPosition(0.05);
+        f.setPosition(0.05);
+        m.setPosition(0.05);
 
 
 //        follower = Constants.createFollower(hardwareMap);
@@ -358,12 +287,10 @@ public class Decode_Red_Auto extends NextFTCOpMode {
     /** This method is called continuously after Init while waiting for "play". **/
     @Override
     public void onWaitForStart() {
-//        telemetryAprilTag();
-//        // Push telemetry to the Driver Station.
-//        telemetry.update();
         if(telemetryAprilTag()>=21&&telemetryAprilTag()<=23){
             aprilValue = telemetryAprilTag();
         }
+        telemetry.update();
     }
 
     /** This method is called once at the start of the OpMode.
@@ -371,8 +298,10 @@ public class Decode_Red_Auto extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
 
-        bT.setPosition(0.0);
-        fO.setPosition(0.0);
+        USE_WEBCAM = false;
+        b.setPosition(0.0);
+        f.setPosition(0.0);
+        m.setPosition(0.0);
 
         doAuto().schedule();
     }
@@ -435,250 +364,104 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
 
 
-
-
-
-
-    private void midLed(String color) {
-        if (color.equals("R")) {
-            middleLED.INSTANCE.Purple().schedule();
-        } else if (color.equals("G")) {
-            middleLED.INSTANCE.Green();
-        } else {
-            middleLED.INSTANCE.Off();
-        }
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void backLed(String color) {
-        if (color.equals("R")) {
-            ledBackRed.on();
-            ledBackGreen.off();
-        } else if (color.equals("G")) {
-            ledBackGreen.on();
-            ledBackRed.off();
-        } else {
-            ledBackRed.off();
-            ledBackGreen.off();
-        }
-    }
-
-    /**
-     * Describe this function...
-     */
-    private void frontLed(String color) {
-        if (color.equals("R")) {
-            ledFrontRed.on();
-            ledFrontGreen.off();
-        } else if (color.equals("G")) {
-            ledFrontGreen.on();
-            ledFrontRed.off();
-        } else {
-            ledFrontRed.off();
-            ledFrontGreen.off();
-        }
-    }
-
-    /**
-     * Describe this function...
-     */
-    private String getColor(String location) {
-        String gotColor;
-        NormalizedRGBA myNormalizedColors;
-        int myColor;
-        float hue;
-        float saturation;
-        float value;
-        double gotDistance;
-
-        if (location.equals("F")) {
-            // Save the color sensor data as a normalized color value. It's recommended
-            // to use Normalized Colors over color sensor colors is because Normalized
-            // Colors consistently gives values between 0 and 1, while the direct
-            // Color Sensor colors are dependent on the specific sensor you're using.
-            myNormalizedColors = ((NormalizedColorSensor) colorFront).getNormalizedColors();
-            // Convert the normalized color values to an Android color value.
-            myColor = myNormalizedColors.toColor();
-            // Use the Android color value to calculate the Hue, Saturation and Value color variables.
-            // See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html for an explanation of HSV color.
-            hue = JavaUtil.colorToHue(myColor);
-            saturation = JavaUtil.colorToSaturation(myColor);
-            value = JavaUtil.colorToValue(myColor);
-            // Use telemetry to display feedback on the driver station. We show the red,
-            // green, and blue normalized values from the sensor (in the range of 0 to
-            // 1), as well as the equivalent HSV (hue, saturation and value) values.
-            telemetry.addLine("red" + location + " | " + JavaUtil.formatNumber(myNormalizedColors.red, 3) + "green" + location + " | " + JavaUtil.formatNumber(myNormalizedColors.green, 3) + "blue" + location + JavaUtil.formatNumber(myNormalizedColors.blue, 3));
-            telemetry.addLine("hue" + location + " | " + JavaUtil.formatNumber(hue, 3) + "saturation" + location + " | " + JavaUtil.formatNumber(saturation, 3) + "value" + location + JavaUtil.formatNumber(value, 3));
-            telemetry.addData("alpha" + location, Double.parseDouble(JavaUtil.formatNumber(myNormalizedColors.alpha, 3)));
-            gotDistance = Double.parseDouble(JavaUtil.formatNumber(colorFront_DistanceSensor.getDistance(DistanceUnit.CM), 3));
-            // If this color sensor also has a distance sensor, display the measured distance.
-            // Note that the reported distance is only useful at very close
-            // range, and is impacted by ambient light and surface reflectivity.
-            telemetry.addData("distance (cm)" + location, gotDistance);
-            if (gotDistance < 5) {
-                if (myNormalizedColors.green >= myNormalizedColors.red && myNormalizedColors.green >= myNormalizedColors.blue) {
-                    frontLed("G");
-                    gotColor = "G";
-                } else if (myNormalizedColors.blue >= myNormalizedColors.red && myNormalizedColors.blue >= myNormalizedColors.blue) {
-                    frontLed("R");
-                    gotColor = "R";
-                } else {
-                    frontLed("");
-                    gotColor = "";
-                }
-            } else {
-                frontLed("");
-                gotColor = "";
-            }
-        } else if (location.equals("M")) {
-            // Save the color sensor data as a normalized color value. It's recommended
-            // to use Normalized Colors over color sensor colors is because Normalized
-            // Colors consistently gives values between 0 and 1, while the direct
-            // Color Sensor colors are dependent on the specific sensor you're using.
-            myNormalizedColors = ((NormalizedColorSensor) colorMid).getNormalizedColors();
-            // Convert the normalized color values to an Android color value.
-            myColor = myNormalizedColors.toColor();
-            // Use the Android color value to calculate the Hue, Saturation and Value color variables.
-            // See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html for an explanation of HSV color.
-            hue = JavaUtil.colorToHue(myColor);
-            saturation = JavaUtil.colorToSaturation(myColor);
-            value = JavaUtil.colorToValue(myColor);
-            // Use telemetry to display feedback on the driver station. We show the red,
-            // green, and blue normalized values from the sensor (in the range of 0 to
-            // 1), as well as the equivalent HSV (hue, saturation and value) values.
-            telemetry.addLine("red" + location + " | " + JavaUtil.formatNumber(myNormalizedColors.red, 3) + "green" + location + " | " + JavaUtil.formatNumber(myNormalizedColors.green, 3) + "blue" + location + JavaUtil.formatNumber(myNormalizedColors.blue, 3));
-            telemetry.addLine("hue" + location + " | " + JavaUtil.formatNumber(hue, 3) + "saturation" + location + " | " + JavaUtil.formatNumber(saturation, 3) + "value" + location + JavaUtil.formatNumber(value, 3));
-            telemetry.addData("alpha" + location, Double.parseDouble(JavaUtil.formatNumber(myNormalizedColors.alpha, 3)));
-            gotDistance = Double.parseDouble(JavaUtil.formatNumber(colorMid_DistanceSensor.getDistance(DistanceUnit.CM), 3));
-            // If this color sensor also has a distance sensor, display the measured distance.
-            // Note that the reported distance is only useful at very close
-            // range, and is impacted by ambient light and surface reflectivity.
-            telemetry.addData("distance (cm)" + location, gotDistance);
-            if (gotDistance < 5) {
-                if (myNormalizedColors.green >= myNormalizedColors.red && myNormalizedColors.green >= myNormalizedColors.blue) {
-                    midLed("G");
-                    gotColor = "G";
-                } else if (myNormalizedColors.blue >= myNormalizedColors.red && myNormalizedColors.blue >= myNormalizedColors.blue) {
-                    midLed("R");
-                    gotColor = "R";
-                } else {
-                    midLed("");
-                    gotColor = "";
-                }
-            } else {
-                midLed("");
-                gotColor = "";
-            }
-        } else if (location.equals("B")) {
-            // Save the color sensor data as a normalized color value. It's recommended
-            // to use Normalized Colors over color sensor colors is because Normalized
-            // Colors consistently gives values between 0 and 1, while the direct
-            // Color Sensor colors are dependent on the specific sensor you're using.
-            myNormalizedColors = ((NormalizedColorSensor) colorBack).getNormalizedColors();
-            // Convert the normalized color values to an Android color value.
-            myColor = myNormalizedColors.toColor();
-            // Use the Android color value to calculate the Hue, Saturation and Value color variables.
-            // See http://web.archive.org/web/20190311170843/https://infohost.nmt.edu/tcc/help/pubs/colortheory/web/hsv.html for an explanation of HSV color.
-            hue = JavaUtil.colorToHue(myColor);
-            saturation = JavaUtil.colorToSaturation(myColor);
-            value = JavaUtil.colorToValue(myColor);
-            // Use telemetry to display feedback on the driver station. We show the red,
-            // green, and blue normalized values from the sensor (in the range of 0 to
-            // 1), as well as the equivalent HSV (hue, saturation and value) values.
-            telemetry.addLine("red" + location + " | " + JavaUtil.formatNumber(myNormalizedColors.red, 3) + "green" + location + " | " + JavaUtil.formatNumber(myNormalizedColors.green, 3) + "blue" + location + JavaUtil.formatNumber(myNormalizedColors.blue, 3));
-            telemetry.addLine("hue" + location + " | " + JavaUtil.formatNumber(hue, 3) + "saturation" + location + " | " + JavaUtil.formatNumber(saturation, 3) + "value" + location + JavaUtil.formatNumber(value, 3));
-            telemetry.addData("alpha" + location, Double.parseDouble(JavaUtil.formatNumber(myNormalizedColors.alpha, 3)));
-            gotDistance = Double.parseDouble(JavaUtil.formatNumber(colorBack_DistanceSensor.getDistance(DistanceUnit.CM), 3));
-            // If this color sensor also has a distance sensor, display the measured distance.
-            // Note that the reported distance is only useful at very close
-            // range, and is impacted by ambient light and surface reflectivity.
-            telemetry.addData("distance (cm)" + location, gotDistance);
-            if (gotDistance < 5) {
-                if (myNormalizedColors.green >= myNormalizedColors.red && myNormalizedColors.green >= myNormalizedColors.blue) {
-                    backLed("G");
-                    gotColor = "G";
-                } else if (myNormalizedColors.blue >= myNormalizedColors.red && myNormalizedColors.blue >= myNormalizedColors.blue) {
-                    backLed("R");
-                    gotColor = "R";
-                } else {
-                    backLed("");
-                    gotColor = "";
-                }
-            } else {
-                backLed("");
-                gotColor = "";
-            }
-        } else {
-            gotColor = "";
-        }
-        return gotColor;
-    }
-
     private Command ShootPattern(){
         String order = "";
+
         if(aprilValue==21){
-            if(getColor("F")=="G"){
+            if(frontLED.INSTANCE.color=="green"){
                 order = "FMB";
             }
-            else if (getColor("M")=="G"){
+            else if (middleLED.INSTANCE.color=="green"){
                 order = "MBF";
             }
-            else if(getColor("B")=="G"){
+            else if(backLED.INSTANCE.color=="green"){
                 order = "BFM";
+            }
+            else{
+                order = "FMB";
             }
         }
         else if(aprilValue == 22){
-            if(getColor("F")=="G"){
+            if(frontLED.INSTANCE.color=="green"){
                 order = "BFM";
             }
-            else if (getColor("M")=="G"){
+            else if (middleLED.INSTANCE.color=="green"){
                 order = "FMB";
             }
-            else if(getColor("B")=="G"){
+            else if(backLED.INSTANCE.color=="green"){
                 order = "MBF";
+            }
+            else{
+                order = "FMB";
             }
         }
         else if(aprilValue == 23){
-            if(getColor("F")=="G"){
+            if(frontLED.INSTANCE.color=="green"){
                 order = "MBF";
             }
-            else if (getColor("M")=="G"){
+            else if (middleLED.INSTANCE.color=="green"){
                 order = "BFM";
             }
-            else if(getColor("B")=="G"){
+            else if(backLED.INSTANCE.color=="green"){
+                order = "FMB";
+            }
+            else{
                 order = "FMB";
             }
         }
+        else{
+            order = "FMB";
+        }
         if(order=="FMB"){
-            new SequentialGroup(
+            return new ParallelGroup(
                     front.INSTANCE.shootCycle(),
-                    new Delay(0.5),
-                    middle.INSTANCE.shootCycle(),
-                    new Delay(0.5),
-                    back.INSTANCE.shootCycle()
+                    new SequentialGroup(
+                            new Delay(1.0),
+                            new ParallelGroup(
+                                    middle.INSTANCE.shootCycle(),
+                                    new SequentialGroup(
+                                            new Delay(1.0),
+                                            back.INSTANCE.shootCycle()
+                                    )
+
+                            )
+
+                    )
+
             );
         }
         else if(order=="MBF"){
-            new SequentialGroup(
+            return new ParallelGroup(
                     middle.INSTANCE.shootCycle(),
-                    new Delay(0.5),
-                    back.INSTANCE.shootCycle(),
-                    new Delay(0.5),
-                    front.INSTANCE.shootCycle()
+                    new SequentialGroup(
+                            new Delay(1.0),
+                            new ParallelGroup(
+                                    back.INSTANCE.shootCycle(),
+                                    new SequentialGroup(
+                                            new Delay(1.0),
+                                            front.INSTANCE.shootCycle()
+                                    )
+                            )
+                    )
             );
         }
         else if(order=="BFM"){
-            new SequentialGroup(
+            return new ParallelGroup(
                     back.INSTANCE.shootCycle(),
-                    new Delay(0.5),
-                    front.INSTANCE.shootCycle(),
-                    new Delay(0.5),
-                    middle.INSTANCE.shootCycle()
+                    new SequentialGroup(
+                            new Delay(1.0),
+                            new ParallelGroup(
+                                    front.INSTANCE.shootCycle(),
+                                    new SequentialGroup(
+                                            new Delay(1.0),
+                                            middle.INSTANCE.shootCycle()
+                                    )
+                            )
+                    )
             );
         }
-        return new SequentialGroup();
+        return new SequentialGroup(new Delay (0)
+        );
     }
 
 }

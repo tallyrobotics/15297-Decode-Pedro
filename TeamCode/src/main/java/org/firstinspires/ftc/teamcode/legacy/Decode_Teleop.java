@@ -54,7 +54,6 @@ public class Decode_Teleop extends NextFTCOpMode {
                 new SubsystemComponent(frontLED.INSTANCE),
                 new SubsystemComponent(middleLED.INSTANCE),
                 new SubsystemComponent(backLED.INSTANCE),
-                new SubsystemComponent(rpmLED.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
@@ -292,14 +291,11 @@ public class Decode_Teleop extends NextFTCOpMode {
 
     private void midLed(String color) {
         if (color.equals("R")) {
-            ledMidRed.on();
-            ledMidGreen.off();
+            middleLED.INSTANCE.Purple().schedule();
         } else if (color.equals("G")) {
-            ledMidGreen.on();
-            ledMidRed.off();
+            middleLED.INSTANCE.Green().schedule();
         } else {
-            ledMidRed.off();
-            ledMidGreen.off();
+            middleLED.INSTANCE.Off().schedule();
         }
     }
 
@@ -308,14 +304,11 @@ public class Decode_Teleop extends NextFTCOpMode {
      */
     private void backLed(String color) {
         if (color.equals("R")) {
-            ledBackRed.on();
-            ledBackGreen.off();
+            backLED.INSTANCE.Purple().schedule();
         } else if (color.equals("G")) {
-            ledBackGreen.on();
-            ledBackRed.off();
+            backLED.INSTANCE.Green().schedule();
         } else {
-            ledBackRed.off();
-            ledBackGreen.off();
+            backLED.INSTANCE.Off().schedule();
         }
     }
 
@@ -324,14 +317,11 @@ public class Decode_Teleop extends NextFTCOpMode {
      */
     private void frontLed(String color) {
         if (color.equals("R")) {
-            ledFrontRed.on();
-            ledFrontGreen.off();
+            frontLED.INSTANCE.Purple().schedule();
         } else if (color.equals("G")) {
-            ledFrontGreen.on();
-            ledFrontRed.off();
+            frontLED.INSTANCE.Green().schedule();
         } else {
-            ledFrontRed.off();
-            ledFrontGreen.off();
+            frontLED.INSTANCE.Off().schedule();
         }
     }
 
