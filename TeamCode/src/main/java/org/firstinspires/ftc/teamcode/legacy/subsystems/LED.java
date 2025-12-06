@@ -126,13 +126,17 @@ public abstract class LED implements Subsystem {
             ActiveOpMode.telemetry().addData(colSenName + " distance (cm)", distance);
             if (distance < 5.0) {
                 if (myNormalizedColors.green >= myNormalizedColors.red && myNormalizedColors.green >= myNormalizedColors.blue) {
+                    color = "green";
                     Green().schedule();
                 } else if (myNormalizedColors.blue >= myNormalizedColors.red && myNormalizedColors.blue >= myNormalizedColors.green) {
+                    color = "purple";
                     Purple().schedule();
                 } else {
+                    color = "off";
                     Off().schedule();
                 }
             } else {
+                color = "off";
                 Off().schedule();
             }
         }

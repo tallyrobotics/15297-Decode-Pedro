@@ -61,6 +61,8 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
     int aprilValue;
     String order;
+    int counter=0;
+    Boolean isShooting = false;
 
 
 
@@ -146,59 +148,32 @@ public class Decode_Red_Auto extends NextFTCOpMode {
         line8 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose3, new Pose(124.300, 101.000))
+                        new BezierLine(shootPose3, new Pose(122.000, 99.000))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-61.0), Math.toRadians(-144.0))
                 .build();
 
     }
 
-    public Command doAuto() {
+    public Command doAuto1() {
         return new SequentialGroup(
                 new ParallelGroup(
-                        intake.INSTANCE.IntakeIn(),
+                        //intake.INSTANCE.IntakeIn(),
                         flyLeftShooter.INSTANCE.flySetRPM(shootRPM),
                         flyRightShooter.INSTANCE.flySetRPM(shootRPM),
                         new FollowPath(line1, true, 0.7)
                 ),
                 new Delay(0.75),
                 new ParallelGroup(
-                        ShootPattern(),
-
+                        //ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()),
+                        new InstantCommand(()-> {isShooting=true;}),
 
                         new SequentialGroup(
                                 new Delay(3.0),
                                 new FollowPath(line2, true, 0.7)
                                 )
                         ),
-                new Delay(0.25),
-                new FollowPath(line3, true, 0.3),
-                new Delay(0.25),
-                new FollowPath(line4, true, 0.7),
-                new Delay(0.25),
-                new ParallelGroup(
-                        ShootPattern(),
-
-
-                        new SequentialGroup(
-                                new Delay(3.0),
-                                new FollowPath(line5, true, 0.7)
-                        )
-                ),
-                new Delay(0.25),
-                new FollowPath(line6, true, 0.3),
-                new Delay(0.25),
-                new FollowPath(line7, true, 0.7),
-                new Delay(1.0),
-                new ParallelGroup(
-                        ShootPattern(),
-
-
-                        new SequentialGroup(
-                                new Delay(3.0),
-                                new FollowPath(line8, true, 1.0)
-                        )
-                )
+                new Delay(0.25)
 
 
 
@@ -206,13 +181,64 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
 
     }
+    public Command doAuto2() {
+        return new SequentialGroup(
+                new FollowPath(line3, true, 0.3),
+                new Delay(0.25),
+                new FollowPath(line4, true, 0.7),
+                new Delay(0.25),
+                new ParallelGroup(
+//                        new SequentialGroup(
+//                                new InstantCommand(()-> {intakeLED.INSTANCE.frontColor();}),
+//                                new InstantCommand(()-> {intakeLED.INSTANCE.middleColor();}),
+//                                new InstantCommand(()-> {intakeLED.INSTANCE.backColor();}),
+                                //
+                        // ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()),
+                        new InstantCommand(()-> {isShooting=true;}),
+//                        ),
+
+
+
+                        new SequentialGroup(
+                                new Delay(3.0),
+                                new FollowPath(line5, true, 0.7)
+                        )
+                )
+        );
+
+
+    }
+    public Command doAuto3() {
+        return new SequentialGroup(
+                new Delay(0.25),
+                new FollowPath(line6, true, 0.3),
+                new Delay(0.25),
+                new FollowPath(line7, true, 0.7),
+                new Delay(1.0),
+                new ParallelGroup(
+//                        ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()),
+                        new InstantCommand(()-> {isShooting=true;}),
+
+                        new SequentialGroup(
+                                new Delay(3.0),
+                                new FollowPath(line8, true, 1.0)
+                        )
+                )
+        );
+    }
 
     /** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
     @Override
     public void onUpdate() {
-
+    counter++;
         // These loop the movements of the robot, these must be called continuously in order to work
         follower().update();
+        if(isShooting){
+            isShooting = false;
+            ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()).schedule();
+
+        }
+
 
         // Feedback to Driver Hub for debugging
 
@@ -221,6 +247,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
         telemetry.addData("heading", Math.toRadians(follower().getPose().getHeading()));
 
         telemetry.addData("Order", order);
+        telemetry.addData("Updates", counter);
 
         telemetry.update();
     }
@@ -278,9 +305,13 @@ public class Decode_Red_Auto extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
 
-        USE_WEBCAM = false;
+        new SequentialGroup(
+                doAuto1(),
+                doAuto2(),
+                doAuto3()
+                ).schedule();
 
-        doAuto().schedule();
+        USE_WEBCAM = false;
     }
 
     /** We do not use this because everything should automatically disable **/
@@ -341,22 +372,19 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
 
 
-    private Command ShootPattern(){
+    private Command ShootPattern(String fc, String mc, String bc){
         order = "";
-        String colorF = frontLED.INSTANCE.getColor();
-        String colorM = middleLED.INSTANCE.getColor();
-        String colorB = backLED.INSTANCE.getColor();
         launcher launchOne;
         launcher launchTwo;
         launcher launchThree;
         if(aprilValue==21){
-            if(Objects.equals(colorF, "green")){
+            if(Objects.equals(fc, "green")){
                 order = "FMB";
             }
-            else if (Objects.equals(colorM, "green")){
+            else if (Objects.equals(mc, "green")){
                 order = "MBF";
             }
-            else if(Objects.equals(colorB, "green")){
+            else if(Objects.equals(bc, "green")){
                 order = "BFM";
             }
             else{
@@ -364,13 +392,13 @@ public class Decode_Red_Auto extends NextFTCOpMode {
             }
         }
         else if(aprilValue == 22){
-            if(Objects.equals(colorF, "green")){
+            if(Objects.equals(fc, "green")){
                 order = "BFM";
             }
-            else if (Objects.equals(colorM, "green")){
+            else if (Objects.equals(mc, "green")){
                 order = "FMB";
             }
-            else if(Objects.equals(colorB, "green")){
+            else if(Objects.equals(bc, "green")){
                 order = "MBF";
             }
             else{
@@ -378,13 +406,13 @@ public class Decode_Red_Auto extends NextFTCOpMode {
             }
         }
         else if(aprilValue == 23){
-            if(Objects.equals(colorF, "green")){
+            if(Objects.equals(fc, "green")){
                 order = "MBF";
             }
-            else if (Objects.equals(colorM, "green")){
+            else if (Objects.equals(mc, "green")){
                 order = "BFM";
             }
-            else if(Objects.equals(colorB, "green")){
+            else if(Objects.equals(bc, "green")){
                 order = "FMB";
             }
             else{
@@ -410,6 +438,8 @@ public class Decode_Red_Auto extends NextFTCOpMode {
             launchTwo = middleLauncher.INSTANCE;
             launchThree = backLauncher.INSTANCE;
         }
+
+        order = "";
 
         return new ParallelGroup(
                     launchOne.shootCycle(),

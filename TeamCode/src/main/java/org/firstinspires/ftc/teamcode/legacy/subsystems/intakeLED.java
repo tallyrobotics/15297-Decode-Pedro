@@ -27,4 +27,14 @@ public class intakeLED extends SubsystemGroup {
             intake.INSTANCE.IntakeIn().schedule();
         }
     }
+
+    public String frontColor(){
+        return frontLED.INSTANCE.getColor();
+    }
+    public String middleColor(){
+        return middleLED.INSTANCE.getColor();
+    }
+    public String backColor(){
+        return backLED.INSTANCE.getColor();
+    }
 }
