@@ -3,8 +3,12 @@ package org.firstinspires.ftc.teamcode.legacy.subsystems;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.core.subsystems.Subsystem;
+import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.hardware.impl.CRServoEx;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.positionable.SetPosition;
@@ -40,5 +44,6 @@ public class intake implements Subsystem {
 
     @Override
     public void periodic() {
+
     }
 }

@@ -5,17 +5,19 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.backLauncher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyLeftShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyRightShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.backLauncher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.frontLauncher;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.launcher;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -37,7 +39,7 @@ import dev.nextftc.hardware.impl.ServoEx;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 
-
+@Disabled
 @Autonomous(name = "Decode Blue Auto")
 public class Decode_Blue_Auto extends NextFTCOpMode {
     public Decode_Blue_Auto(){
@@ -46,8 +48,8 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 new SubsystemComponent(intake.INSTANCE),
                 new SubsystemComponent(flyRightShooter.INSTANCE),
                 new SubsystemComponent(flyLeftShooter.INSTANCE),
-                new SubsystemComponent(backLauncher.INSTANCE),
-                new SubsystemComponent(frontLauncher.INSTANCE)
+                new SubsystemComponent(frontLauncher.INSTANCE),
+                new SubsystemComponent(backLauncher.INSTANCE)
         );
     }
 
@@ -182,10 +184,10 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 ),
                 new Delay(0.25),
                 new ParallelGroup(
-                        frontLauncher.INSTANCE.shootCycle(),
+                        backLauncher.INSTANCE.shootCycle(),
                         new SequentialGroup(
                                 new Delay(0.15),
-                                backLauncher.INSTANCE.shootCycle()),
+                                frontLauncher.INSTANCE.shootCycle()),
 
 
                         new SequentialGroup(
@@ -199,10 +201,10 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 new FollowPath(line4, true, 0.6),
                 new Delay(0.25),
                 new ParallelGroup(
-                        frontLauncher.INSTANCE.shootCycle(),
+                        backLauncher.INSTANCE.shootCycle(),
                         new SequentialGroup(
                                 new Delay(0.15),
-                                backLauncher.INSTANCE.shootCycle()),
+                                frontLauncher.INSTANCE.shootCycle()),
 
 
                         new SequentialGroup(
@@ -216,10 +218,10 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 new FollowPath(line7, true, 0.5),
                 new Delay(1.0),
                 new ParallelGroup(
-                        frontLauncher.INSTANCE.shootCycle(),
+                        backLauncher.INSTANCE.shootCycle(),
                         new SequentialGroup(
                                 new Delay(0.15),
-                                backLauncher.INSTANCE.shootCycle()),
+                                frontLauncher.INSTANCE.shootCycle()),
 
 
                         new SequentialGroup(
@@ -284,18 +286,7 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
         follower().setStartingPose(startPose);
         buildPaths();
 
-        new InstantCommand(() -> {
-            new SequentialGroup(
-                    new ParallelGroup(
-                            backLauncher.INSTANCE.up(),
-                            frontLauncher.INSTANCE.up()),
-                    new Delay(1),
-                    new ParallelGroup(
-                            backLauncher.INSTANCE.down(),
-                            frontLauncher.INSTANCE.down()
-                    )
-            );
-        }).schedule();
+
 
 
         USE_WEBCAM = true;

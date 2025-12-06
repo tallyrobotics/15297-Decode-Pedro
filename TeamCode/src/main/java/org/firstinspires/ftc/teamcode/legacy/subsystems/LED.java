@@ -33,9 +33,9 @@ public abstract class LED implements Subsystem {
     private static final Double off = 0.0;
     private static final Double red = 0.285;
     private static final Double yellow = 0.41;
-    private static final Double green = 0.56;
+    private static final Double green = 0.46;
     private static final Double blue = 0.60;
-    private static final Double purple = 0.77;
+    private static final Double purple = 0.67;
 
     private String color = "off";
     private double distance = -1.0;
@@ -126,14 +126,14 @@ public abstract class LED implements Subsystem {
             ActiveOpMode.telemetry().addData(colSenName + " distance (cm)", distance);
             if (distance < 5.0) {
                 if (myNormalizedColors.green >= myNormalizedColors.red && myNormalizedColors.green >= myNormalizedColors.blue) {
-                    Green();
+                    Green().schedule();
                 } else if (myNormalizedColors.blue >= myNormalizedColors.red && myNormalizedColors.blue >= myNormalizedColors.green) {
-                    Purple();
+                    Purple().schedule();
                 } else {
-                    Off();
+                    Off().schedule();
                 }
             } else {
-                Off();
+                Off().schedule();
             }
         }
     }

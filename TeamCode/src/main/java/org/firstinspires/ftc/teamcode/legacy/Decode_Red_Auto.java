@@ -12,14 +12,17 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.backLED;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.backLauncher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyLeftShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyRightShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.frontLED;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.backLauncher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.frontLauncher;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.middleLauncher;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.launcher;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.intakeLED;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.middleLED;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.middleLauncher;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.shootersLED;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -48,33 +51,26 @@ public class Decode_Red_Auto extends NextFTCOpMode {
     public Decode_Red_Auto(){
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(intake.INSTANCE),
-                new SubsystemComponent(flyRightShooter.INSTANCE),
-                new SubsystemComponent(flyLeftShooter.INSTANCE),
-                new SubsystemComponent(backLauncher.INSTANCE),
-                new SubsystemComponent(middleLauncher.INSTANCE),
+                new SubsystemComponent(shootersLED.INSTANCE),
                 new SubsystemComponent(frontLauncher.INSTANCE),
-                new SubsystemComponent(frontLED.INSTANCE),
-                new SubsystemComponent(middleLED.INSTANCE),
-                new SubsystemComponent(backLED.INSTANCE)
+                new SubsystemComponent(middleLauncher.INSTANCE),
+                new SubsystemComponent(backLauncher.INSTANCE),
+                new SubsystemComponent(intakeLED.INSTANCE)
         );
     }
 
-    public ServoEx b;
-    public ServoEx f;
-    public ServoEx m;
-    public String frontName = "front";
-    public String backName = "back";
-    public String midName = "middle";
-
     int aprilValue;
+    String order;
 
 
 
 //    private Follower follower;
 
     private final Pose startPose = new Pose(120.643, 130, Math.toRadians(-51.0));
-    private final Pose shootPose = new Pose(114.5, 123.6, Math.toRadians(-58.0));
+    private final Pose shootPose1 = new Pose(114.5, 123.6, Math.toRadians(-58.0));
+    private final Pose shootPose2 = new Pose(111.5, 117.5, Math.toRadians(-61.0));
+    private final Pose shootPose3 = new Pose(111.0, 112.5, Math.toRadians(-61.0));
+
 
     private final int shootRPM = 1700; //2000 without
 
@@ -90,7 +86,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
                line1 = follower().pathBuilder()
                        .addPath(
-                               new BezierLine(startPose, shootPose)
+                               new BezierLine(startPose, shootPose1)
                        )
                        .setConstantHeadingInterpolation(Math.toRadians(-51.0))
                        .build();
@@ -98,7 +94,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
         line2 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose, new Pose(98.000, 83.750+6.5))
+                        new BezierLine(shootPose1, new Pose(98.000, 83.750+6.5))
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(-51.0), Math.toRadians(0.0))
                 .build();
@@ -114,23 +110,23 @@ public class Decode_Red_Auto extends NextFTCOpMode {
         line4 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(124.000, 83.750+6.5), shootPose)
+                        new BezierLine(new Pose(124.000, 83.750+6.5), shootPose2)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0.0), Math.toRadians(-56.0))
+                .setLinearHeadingInterpolation(Math.toRadians(0.0), Math.toRadians(-61.0))
                 .build();
 
         line5 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose, new Pose(98.000, 59.750+6.5))
+                        new BezierLine(shootPose2, new Pose(98.000, 59.750+5))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-56.0), Math.toRadians(0.0))
+                .setLinearHeadingInterpolation(Math.toRadians(-61.0), Math.toRadians(0.0))
                 .build();
 
         line6 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(98.000, 59.750+6.5), new Pose(120.000, 59.750+6.5))
+                        new BezierLine(new Pose(98.000, 59.750+5), new Pose(120.000, 59.750+5))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(0.0))
                 .build();
@@ -139,20 +135,20 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(124.000, 59.750+6.5),
-                                new Pose(109.100, 55.600+6.5),
-                                shootPose
+                                new Pose(124.000, 59.750+5),
+                                new Pose(109.100, 55.600+5),
+                                shootPose3
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0.0), Math.toRadians(-56.0))
+                .setLinearHeadingInterpolation(Math.toRadians(0.0), Math.toRadians(-61.0))
                 .build();
 
         line8 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose, new Pose(124.300, 101.000))
+                        new BezierLine(shootPose3, new Pose(124.300, 101.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-56.0), Math.toRadians(-144.0))
+                .setLinearHeadingInterpolation(Math.toRadians(-61.0), Math.toRadians(-144.0))
                 .build();
 
     }
@@ -165,7 +161,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                         flyRightShooter.INSTANCE.flySetRPM(shootRPM),
                         new FollowPath(line1, true, 0.7)
                 ),
-                new Delay(0.25),
+                new Delay(0.75),
                 new ParallelGroup(
                         ShootPattern(),
 
@@ -224,28 +220,24 @@ public class Decode_Red_Auto extends NextFTCOpMode {
         telemetry.addData("y", follower().getPose().getY());
         telemetry.addData("heading", Math.toRadians(follower().getPose().getHeading()));
 
-        if(Objects.equals(frontLED.INSTANCE.getColor(), "off") && Objects.equals(middleLED.INSTANCE.getColor(), "off") && Objects.equals(backLED.INSTANCE.getColor(), "off")){
-            intake.INSTANCE.IntakeOff().schedule();
-        }
-        else{
-            intake.INSTANCE.IntakeIn().schedule();
-        }
+        telemetry.addData("Order", order);
+
         telemetry.update();
     }
 
     /** This method is called once at the init of the OpMode. **/
     @Override
     public void onInit() {
-        b = new ServoEx(backName);
-        b.getServo().setDirection(Servo.Direction.FORWARD);
-        f = new ServoEx(frontName);
-        f.getServo().setDirection(Servo.Direction.FORWARD);
-        m = new ServoEx(midName);
-        m.getServo().setDirection(Servo.Direction.REVERSE);
-
-        b.setPosition(0.05);
-        f.setPosition(0.05);
-        m.setPosition(0.05);
+//        b = new ServoEx(backName);
+//        b.getServo().setDirection(Servo.Direction.FORWARD);
+//        f = new ServoEx(frontName);
+//        f.getServo().setDirection(Servo.Direction.FORWARD);
+//        m = new ServoEx(midName);
+//        m.getServo().setDirection(Servo.Direction.REVERSE);
+//
+//        b.setPosition(0.05);
+//        f.setPosition(0.05);
+//        m.setPosition(0.05);
 
 
 //        follower = Constants.createFollower(hardwareMap);
@@ -253,18 +245,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
         follower().setStartingPose(startPose);
         buildPaths();
 
-        new InstantCommand(() -> {
-            new SequentialGroup(
-                    new ParallelGroup(
-                            backLauncher.INSTANCE.up(),
-                            frontLauncher.INSTANCE.up()),
-                    new Delay(1),
-                    new ParallelGroup(
-                            backLauncher.INSTANCE.down(),
-                            frontLauncher.INSTANCE.down()
-                    )
-            );
-            }).schedule();
+
 
 
         USE_WEBCAM = true;
@@ -281,9 +262,14 @@ public class Decode_Red_Auto extends NextFTCOpMode {
     /** This method is called continuously after Init while waiting for "play". **/
     @Override
     public void onWaitForStart() {
-        if(telemetryAprilTag()>=21&&telemetryAprilTag()<=23){
-            aprilValue = telemetryAprilTag();
+        int av = telemetryAprilTag();
+        if(av>=21&&av<=23){
+            aprilValue = av;
         }
+        else{
+            aprilValue = -1;
+        }
+        telemetry.addData("AprilValue", aprilValue);
         telemetry.update();
     }
 
@@ -293,9 +279,6 @@ public class Decode_Red_Auto extends NextFTCOpMode {
     public void onStartButtonPressed() {
 
         USE_WEBCAM = false;
-        b.setPosition(0.0);
-        f.setPosition(0.0);
-        m.setPosition(0.0);
 
         doAuto().schedule();
     }
@@ -359,16 +342,21 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
 
     private Command ShootPattern(){
-        String order = "";
-
+        order = "";
+        String colorF = frontLED.INSTANCE.getColor();
+        String colorM = middleLED.INSTANCE.getColor();
+        String colorB = backLED.INSTANCE.getColor();
+        launcher launchOne;
+        launcher launchTwo;
+        launcher launchThree;
         if(aprilValue==21){
-            if(Objects.equals(frontLED.INSTANCE.getColor(), "green")){
+            if(Objects.equals(colorF, "green")){
                 order = "FMB";
             }
-            else if (Objects.equals(middleLED.INSTANCE.getColor(), "green")){
+            else if (Objects.equals(colorM, "green")){
                 order = "MBF";
             }
-            else if(Objects.equals(backLED.INSTANCE.getColor(), "green")){
+            else if(Objects.equals(colorB, "green")){
                 order = "BFM";
             }
             else{
@@ -376,13 +364,13 @@ public class Decode_Red_Auto extends NextFTCOpMode {
             }
         }
         else if(aprilValue == 22){
-            if(Objects.equals(frontLED.INSTANCE.getColor(), "green")){
+            if(Objects.equals(colorF, "green")){
                 order = "BFM";
             }
-            else if (Objects.equals(middleLED.INSTANCE.getColor(), "green")){
+            else if (Objects.equals(colorM, "green")){
                 order = "FMB";
             }
-            else if(Objects.equals(backLED.INSTANCE.getColor(), "green")){
+            else if(Objects.equals(colorB, "green")){
                 order = "MBF";
             }
             else{
@@ -390,13 +378,13 @@ public class Decode_Red_Auto extends NextFTCOpMode {
             }
         }
         else if(aprilValue == 23){
-            if(Objects.equals(frontLED.INSTANCE.getColor(), "green")){
+            if(Objects.equals(colorF, "green")){
                 order = "MBF";
             }
-            else if (Objects.equals(middleLED.INSTANCE.getColor(), "green")){
+            else if (Objects.equals(colorM, "green")){
                 order = "BFM";
             }
-            else if(Objects.equals(backLED.INSTANCE.getColor(), "green")){
+            else if(Objects.equals(colorB, "green")){
                 order = "FMB";
             }
             else{
@@ -406,56 +394,39 @@ public class Decode_Red_Auto extends NextFTCOpMode {
         else{
             order = "FMB";
         }
-        if(order=="FMB"){
-            return new ParallelGroup(
-                    frontLauncher.INSTANCE.shootCycle(),
-                    new SequentialGroup(
-                            new Delay(1.0),
-                            new ParallelGroup(
-                                    middleLauncher.INSTANCE.shootCycle(),
-                                    new SequentialGroup(
-                                            new Delay(1.0),
-                                            backLauncher.INSTANCE.shootCycle()
-                                    )
 
-                            )
-
-                    )
-
-            );
+        if(order =="MBF") {
+            launchOne = middleLauncher.INSTANCE;
+            launchTwo = backLauncher.INSTANCE;
+            launchThree = frontLauncher.INSTANCE;
         }
-        else if(order=="MBF"){
-            return new ParallelGroup(
-                    middleLauncher.INSTANCE.shootCycle(),
+        else if(order =="BFM") {
+            launchOne = backLauncher.INSTANCE;
+            launchTwo = frontLauncher.INSTANCE;
+            launchThree = middleLauncher.INSTANCE;
+        }
+        else {
+            launchOne = frontLauncher.INSTANCE;
+            launchTwo = middleLauncher.INSTANCE;
+            launchThree = backLauncher.INSTANCE;
+        }
+
+        return new ParallelGroup(
+                    launchOne.shootCycle(),
                     new SequentialGroup(
                             new Delay(1.0),
                             new ParallelGroup(
-                                    backLauncher.INSTANCE.shootCycle(),
+                                    launchTwo.shootCycle(),
                                     new SequentialGroup(
                                             new Delay(1.0),
-                                            frontLauncher.INSTANCE.shootCycle()
+                                            launchThree.shootCycle()
                                     )
                             )
                     )
             );
-        }
-        else if(order=="BFM"){
-            return new ParallelGroup(
-                    backLauncher.INSTANCE.shootCycle(),
-                    new SequentialGroup(
-                            new Delay(1.0),
-                            new ParallelGroup(
-                                    frontLauncher.INSTANCE.shootCycle(),
-                                    new SequentialGroup(
-                                            new Delay(1.0),
-                                            middleLauncher.INSTANCE.shootCycle()
-                                    )
-                            )
-                    )
-            );
-        }
-        return new SequentialGroup(new Delay (0)
-        );
+
+//        return new SequentialGroup(new Delay (0)
+//        );
     }
 
 }

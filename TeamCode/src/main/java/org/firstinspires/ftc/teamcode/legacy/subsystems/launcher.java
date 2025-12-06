@@ -9,18 +9,20 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
 
-public class front implements Subsystem {
+public abstract class launcher implements Subsystem {
 
-public static final front INSTANCE = new front();
-private front() {}
+public launcher(String launchName, Boolean isReversed) {name = launchName; reverse = isReversed;}
 
-    public static final Double down = 0.0;
+
+
+    public static final Double down = 0.25;
     public static final Double up = 1.0;
 
     private boolean isUp = false;
 
     public ServoEx lift;
-    public String name = "front";
+    final boolean reverse;
+    final String name;
 
     public Command toggle() {
         if (isUp) {
@@ -52,7 +54,15 @@ private front() {}
     @Override
     public void initialize() {
         lift = new ServoEx(name);
-        lift.getServo().setDirection(Servo.Direction.FORWARD);}
+        if(reverse){
+            lift.getServo().setDirection(Servo.Direction.REVERSE);
+        }
+        else{
+            lift.getServo().setDirection(Servo.Direction.FORWARD);
+        }
+        lift.getServo().setPosition(0.3);
+    }
+
 
     @Override
     public void periodic() {
