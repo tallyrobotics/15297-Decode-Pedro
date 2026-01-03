@@ -15,7 +15,7 @@ public launcher(String launchName, Boolean isReversed) {name = launchName; rever
 
 
 
-    public static final Double down = 0.25;
+    public static final Double down = 0.15;
     public static final Double up = 1.0;
 
     private boolean isUp = false;
@@ -60,7 +60,7 @@ public launcher(String launchName, Boolean isReversed) {name = launchName; rever
         else{
             lift.getServo().setDirection(Servo.Direction.FORWARD);
         }
-        lift.getServo().setPosition(0.3);
+        lift.getServo().setPosition(0.02);
     }
 
 
