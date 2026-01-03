@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
+import com.bylazar.configurables.annotations.Configurable;
+
 //import androidx.annotation.NonNull;
 //import dev.nextftc.control.ControlSystem;
 //import dev.nextftc.core.commands.Command;
@@ -7,15 +9,15 @@ package org.firstinspires.ftc.teamcode.legacy.subsystems;
 //import dev.nextftc.core.subsystems.Subsystem;
 //import dev.nextftc.hardware.controllable.RunToVelocity;
 //import dev.nextftc.hardware.impl.MotorEx;
+@Configurable
+public class flyRightShooter extends flyShooter {// implements Subsystem {
+    private static double velPidP = 0.001;
+    private static double velPidI = 0.0;
+    private static double velPidD = 0.0;
+    public static final flyRightShooter INSTANCE = new flyRightShooter("flyRight", false/*, velPidP, velPidI, velPidD*/);
 
-public class flyRightShooter extends flyShooter { //} Subsystem {
-
-    public static final flyRightShooter INSTANCE = new flyRightShooter("flyRight", true);
-
-    public flyRightShooter(String motorName, boolean reverseMotor) {
-        super(motorName, reverseMotor, -200);
-
-
+    public flyRightShooter(String motorName, boolean reverseMotor/*, double p, double i, double d*/) {
+        super(motorName, reverseMotor, 0/*, p, i, d*/);
     }
 //    public static final flyRightShooter INSTANCE = new flyRightShooter();
 //

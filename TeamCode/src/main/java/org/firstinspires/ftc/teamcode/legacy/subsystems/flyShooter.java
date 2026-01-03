@@ -1,56 +1,49 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
-import androidx.annotation.NonNull;
-
+import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import dev.nextftc.control.ControlSystem;
+import dev.nextftc.control.KineticState;
+import dev.nextftc.control.feedback.PIDCoefficients;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.NullCommand;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
-import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
+import com.bylazar.configurables.PanelsConfigurables;
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.configurables.annotations.IgnoreConfigurable;
+import com.bylazar.field.FieldManager;
+import com.bylazar.field.PanelsField;
+import com.bylazar.field.Style;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 
+@Configurable
 public abstract class flyShooter implements Subsystem {
 
-//    public static final flyShooter INSTANCE = new flyShooter();
+    public flyShooter(String motorName, boolean reverseMotor, int offset/*, double p, double i, double d*/) {flyMotorName = motorName; flyReverseMotor = reverseMotor; addage = offset; /*velPidP = p; velPidI = i; velPidD = d;*/}
 
-//    private flyShooter() {}
-    public flyShooter(String motorName, boolean reverseMotor, int offset) {flyMotorName = motorName; flyReverseMotor = reverseMotor; addage = offset;}
-
+    public ControlSystem controller;
     public MotorEx flyMotor;
     private final String flyMotorName;
     private final boolean flyReverseMotor;
     private final int addage;
+    private static double velPidP;
+    private static double velPidI;
+    private static double velPidD;
 
-//    private double targetTPS = 0;
     private double targetRPM = 0;
 
-//    public ControlSystem controlSystem = ControlSystem.builder()
-////            .velPid(0.011,0,0)
-////            .basicFF(0.0005)
-//            .velPid(0.0002,0,0)
-//            .basicFF(0.00001)
-//            .build();
-
-//    @NonNull
-//    public Command getDefaultCommand() {
-//        return new RunToVelocity(controlSystem, targetTPS, 5).requires(this);
-//    }
-
     public Command flyOff() {
-//        targetTPS = 0;
-//        return new RunToVelocity(controlSystem, targetTPS, 5).requires(this);
         targetRPM = 0;
         return new NullCommand();
     }
 
     public Command flySetRPM(double rpm) {
-//        return new InstantCommand(() -> targetTPS = ((targetRPM*28)/60)*2.89); // 3:1 = 2.89:1
-//        targetTPS = ((targetRPM*28)/60)*2.89; // 3:1 = 2.89:1
-//        return new RunToVelocity(controlSystem, targetTPS, 5).requires(this);
         targetRPM = rpm+addage;
         return new NullCommand();
     }
@@ -60,7 +53,11 @@ public abstract class flyShooter implements Subsystem {
     }
 
     @Override
-    public void initialize() {
+    public void initialize(){
+//        controller = ControlSystem.builder()
+//                .velSquID(velPidP,velPidI,velPidD)
+//                .build();
+//        controller.setGoal(new KineticState(0.0));
         flyMotor = new MotorEx(flyMotorName);
         flyMotor.getMotor().setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         flyMotor.getMotor().setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -73,10 +70,13 @@ public abstract class flyShooter implements Subsystem {
     @Override
     public void periodic()
     {
+//        controller = ControlSystem.builder()
+//                .velSquID(velPidP,velPidI,velPidD)
+//                .build();
+//        controller.setGoal(new KineticState(0.0, (targetRPM)));
         if (ActiveOpMode.isStarted()) {
-//        flyMotor.setPower(controlSystem.calculate(flyMotor.getState()));
             flyMotor.getMotor().setVelocity(targetRPM);
-//            ActiveOpMode.telemetry().addData(flyMotorName + " State", flyMotor.getState());
+//            flyMotor.setPower(controller.calculate(new KineticState(flyMotor.getCurrentPosition(),flyMotor.getVelocity())));
         }
         else
         {
