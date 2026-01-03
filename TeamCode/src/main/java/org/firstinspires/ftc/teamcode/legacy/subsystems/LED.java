@@ -18,10 +18,11 @@ import dev.nextftc.hardware.positionable.SetPosition;
 
 public abstract class LED implements Subsystem {
 
-    public LED(String ledName, String colorSenseName, String distSenseName) {
+    public LED(String ledName, String colorSenseName, String distSenseName, Double maxDistance) {
         LEDname = ledName;
         colSenName = colorSenseName;
         distanceName = distSenseName;
+        maxDist = maxDistance;
     }
 
     public ServoEx led;
@@ -36,6 +37,8 @@ public abstract class LED implements Subsystem {
     private static final Double green = 0.46;
     private static final Double blue = 0.60;
     private static final Double purple = 0.67;
+
+    private final Double maxDist;
 
     private String color = "off";
     private double distance = -1.0;
@@ -124,7 +127,7 @@ public abstract class LED implements Subsystem {
             // Note that the reported distance is only useful at very close
             // range, and is impacted by ambient light and surface reflectivity.
             ActiveOpMode.telemetry().addData(colSenName + " distance (cm)", distance);
-            if (distance < 5.0) {
+            if (distance < maxDist) {
                 if (myNormalizedColors.green >= myNormalizedColors.red && myNormalizedColors.green >= myNormalizedColors.blue) {
                     color = "green";
                     Green().schedule();

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.legacy;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -28,6 +29,7 @@ import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.extensions.pedro.PedroComponent;
 
+@Configurable
 @TeleOp(name = "Decode Teleop")
 public class Decode_Teleop extends NextFTCOpMode {
 
@@ -60,6 +62,10 @@ public class Decode_Teleop extends NextFTCOpMode {
     private final Double turtle = 0.3;
     private Double speed;
     private double shootRPM = 0.0;
+
+    static double frontWait = 0.00;
+    static double middleWait = 0.00;
+    static double backWait = 0.00;
 
     public MecanumDriverControlled driverControlled;
 
@@ -109,15 +115,9 @@ public class Decode_Teleop extends NextFTCOpMode {
 
         telemetry.addData("flyLeft RPM",flyLeftShooter.INSTANCE.flyMotor.getVelocity());
 //        telemetry.addData("flyLeft Target RPM", flyLeftShooter.INSTANCE.controlSystem.getGoal().getVelocity());
-        telemetry.addData("flyLeft Power",flyLeftShooter.INSTANCE.flyMotor.getPower());
         telemetry.addData("flyRight RPM",flyRightShooter.INSTANCE.flyMotor.getVelocity());
 //        telemetry.addData("flyRight Target RPM", flyRightShooter.INSTANCE.controlSystem.getGoal().getVelocity());
-        telemetry.addData("flyRight Power",flyRightShooter.INSTANCE.flyMotor.getPower());
         telemetry.addData("shootRPM", shootRPM);
-        telemetry.addData("RightTPS", flyRightShooter.INSTANCE.getTargetRPM());//TPS());
-        telemetry.addData("LeftTPS", flyLeftShooter.INSTANCE.getTargetRPM());//TPS());
-        telemetry.addData("flyLDir", flyLeftShooter.INSTANCE.flyMotor.getDirection());
-        telemetry.addData("flyRDir", flyRightShooter.INSTANCE.flyMotor.getDirection());
 
         telemetry.addLine("Hold the A button on gamepad 1 to increase gain, or B to decrease it.");
         telemetry.addLine(" ");
@@ -190,15 +190,15 @@ public class Decode_Teleop extends NextFTCOpMode {
             new ParallelGroup(
 
                     new SequentialGroup(
-                            new Delay(0.1),
+                            new Delay(frontWait),
                             frontLauncher.INSTANCE.shootCycle()
                     ),
                     new SequentialGroup(
-                            new Delay(0.00),
+                            new Delay(middleWait),
                             middleLauncher.INSTANCE.shootCycle()
                     ),
                     new SequentialGroup(
-                            new Delay(0.1),
+                            new Delay(backWait),
                             backLauncher.INSTANCE.shootCycle()
                     )
 
@@ -217,7 +217,7 @@ public class Decode_Teleop extends NextFTCOpMode {
 
         Gamepads.gamepad2().dpadRight().whenBecomesTrue(
                 new InstantCommand(() -> {
-                    shootRPM = 1800;
+                    shootRPM = 1700;
                     flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
                     flyRightShooter.INSTANCE.flySetRPM(shootRPM);
                 }

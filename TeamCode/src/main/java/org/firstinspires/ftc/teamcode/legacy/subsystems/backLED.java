@@ -2,11 +2,11 @@ package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
 public class backLED extends LED {
 
-    public static final backLED INSTANCE = new backLED("ledBack", "colorBack", "colorBack");
+    public static final backLED INSTANCE = new backLED("ledBack", "colorBack", "colorBack", 6.7);
 
 
-    public backLED(String ledName, String colorName, String distanceName) {
-            super(ledName, colorName,distanceName);
+    public backLED(String ledName, String colorName, String distanceName, Double maxDist) {
+            super(ledName, colorName,distanceName, maxDist);
     }
 
 }
