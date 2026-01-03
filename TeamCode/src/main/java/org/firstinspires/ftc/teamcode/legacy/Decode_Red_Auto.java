@@ -59,7 +59,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
         );
     }
 
-    int aprilValue;
+    Integer aprilValue;
     String order;
     int counter=0;
     Boolean isShooting = false;
@@ -68,7 +68,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
 //    private Follower follower;
 
-    private final Pose startPose = new Pose(120.643, 130, Math.toRadians(-51.0));
+    private final Pose startPose = new Pose(120.643, 130.0, Math.toRadians(-51.0));
     private final Pose shootPose1 = new Pose(114.5, 123.6, Math.toRadians(-58.0));
     private final Pose shootPose2 = new Pose(111.5, 117.5, Math.toRadians(-61.0));
     private final Pose shootPose3 = new Pose(111.0, 112.5, Math.toRadians(-61.0));
@@ -355,7 +355,9 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                 telemetry.addLine("XYZ " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.x, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.y, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.z, 6, 1) + "  (inch)");
                 telemetry.addLine("PRY " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.pitch, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.roll, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.yaw, 6, 1) + "  (deg)");
                 telemetry.addLine("RBE " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.range, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.bearing, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.elevation, 6, 1) + "  (inch, deg, deg)");
-                returnValue = myAprilTagDetection.id;
+                if(myAprilTagDetection.id>=21&&myAprilTagDetection.id<=23){
+                    returnValue = myAprilTagDetection.id;
+                }
             } else {
                 telemetry.addLine("==== (ID " + myAprilTagDetection.id + ") Unknown");
                 telemetry.addLine("Center " + JavaUtil.formatNumber(myAprilTagDetection.center.x, 6, 0) + "" + JavaUtil.formatNumber(myAprilTagDetection.center.y, 6, 0) + " (pixels)");

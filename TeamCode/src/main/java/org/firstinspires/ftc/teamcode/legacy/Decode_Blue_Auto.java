@@ -5,25 +5,31 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.backLED;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.backLauncher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyLeftShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyRightShooter;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.frontLED;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.frontLauncher;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.launcher;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.intakeLED;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.middleLED;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.middleLauncher;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.shootersLED;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
+import java.util.Objects;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.delays.Delay;
@@ -39,33 +45,36 @@ import dev.nextftc.hardware.impl.ServoEx;
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 
-@Disabled
+
 @Autonomous(name = "Decode Blue Auto")
 public class Decode_Blue_Auto extends NextFTCOpMode {
     public Decode_Blue_Auto(){
         addComponents(
                 new PedroComponent(Constants::createFollower),
-                new SubsystemComponent(intake.INSTANCE),
-                new SubsystemComponent(flyRightShooter.INSTANCE),
-                new SubsystemComponent(flyLeftShooter.INSTANCE),
+                new SubsystemComponent(shootersLED.INSTANCE),
                 new SubsystemComponent(frontLauncher.INSTANCE),
-                new SubsystemComponent(backLauncher.INSTANCE)
+                new SubsystemComponent(middleLauncher.INSTANCE),
+                new SubsystemComponent(backLauncher.INSTANCE),
+                new SubsystemComponent(intakeLED.INSTANCE)
         );
     }
 
-    public ServoEx bT;
-    public ServoEx fO;
-    public String frontTwoName = "frontTwo";
-    public String backOneName = "backOne";
+    Integer aprilValue;
+    String order;
+    int counter=0;
+    Boolean isShooting = false;
 
 
 
 //    private Follower follower;
 
-    private final Pose startPose = new Pose(23.1, 127.7, Math.toRadians(52.0));
-    private final Pose shootPose = new Pose(32.5, 118, Math.toRadians(52.0));
+    private final Pose startPose = new Pose(144-120.643, 130, Math.toRadians(51.0));
+    private final Pose shootPose1 = new Pose(144-114.5, 123.6, Math.toRadians(53.0));
+    private final Pose shootPose2 = new Pose(144-111.5, 116.5, Math.toRadians(57.0));
+    private final Pose shootPose3 = new Pose(144-111.0, 110.5, Math.toRadians(57.0));
 
-    private final int shootRPM = 2000; //2000 without
+
+    private final int shootRPM = 1700; //2000 without
 
 
     boolean USE_WEBCAM;
@@ -73,212 +82,189 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
     VisionPortal myVisionPortal;
 
 
-    private PathChain line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11;
+    private PathChain line1, line2, line3, line4, line5, line6, line7, line8;
 
     public void buildPaths() {
 
         line1 = follower().pathBuilder()
                 .addPath(
-                        new BezierLine(startPose, shootPose)
+                        new BezierLine(startPose, shootPose1)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(52.0))
+                .setConstantHeadingInterpolation(Math.toRadians(53.0))
                 .build();
 
         line2 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose, new Pose(44.000, 87.000))
+                        new BezierLine(shootPose1, new Pose(144-98.000, 83.750+4.5))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(52.0), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(53.0), Math.toRadians(180.0))
                 .build();
 
         line3 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(44.000, 87.000), new Pose(19.000, 87.000))
+                        new BezierLine(new Pose(144-98.000, 83.750+4.5), new Pose(144-123.000, 83.750+4.5))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.0))
                 .build();
 
         line4 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(19.000, 87.000), shootPose)
+                        new BezierLine(new Pose(144-124.000, 83.750+4.5), shootPose2)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(54.0))
+                .setLinearHeadingInterpolation(Math.toRadians(180.0), Math.toRadians(57.0))
                 .build();
 
         line5 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose, new Pose(49.000, 61.500))
+                        new BezierLine(shootPose2, new Pose(144-98.000, 59.750+4.5))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(54.0), Math.toRadians(180))
+                .setLinearHeadingInterpolation(Math.toRadians(57.0), Math.toRadians(180.0))
                 .build();
 
         line6 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(49.000, 61.500), new Pose(14.000, 61.500))
+                        new BezierLine(new Pose(144-98.000, 59.750+4.5), new Pose(144-124.000, 59.750+4.5))
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.0))
                 .build();
 
         line7 = follower()
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(14.000, 61.500),
-                                new Pose(41.784, 57.130),
-                                shootPose
+                                new Pose(144-124.000, 59.750+4.5),
+                                new Pose(144-109.100, 55.600+4.5),
+                                shootPose3
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(54.0))
+                .setLinearHeadingInterpolation(Math.toRadians(180.0), Math.toRadians(57.0))
                 .build();
 
-//        line8 = follower()
-//                .pathBuilder()
-//                .addPath(
-//                        new BezierLine(new Pose(33.000, 118), new Pose(98.000, 38.000))
-//                )
-//                .setLinearHeadingInterpolation(Math.toRadians(54.0), Math.toRadians(0))
-//                .build();
-//
-//        line9 = follower()
-//                .pathBuilder()
-//                .addPath(
-//                        new BezierLine(new Pose(98.000, 38.000), new Pose(130.000, 38.000))
-//                )
-//                .setConstantHeadingInterpolation(Math.toRadians(0))
-//                .build();
-//
-//        line10 = follower()
-//                .pathBuilder()
-//                .addPath(
-//                        new BezierCurve(
-//                                new Pose(130.000, 38.000),
-//                                new Pose(104.720, 33.222),
-//                                shootPose
-//                        )
-//                )
-//                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(308.0))
-//                .build();
-
-        line11 = follower()
+        line8 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose, new Pose(21.000, 97.000))
+                        new BezierLine(shootPose3, new Pose(144-122.000, 99.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(54.0), Math.toRadians(315))
+                .setLinearHeadingInterpolation(Math.toRadians(57.0), Math.toRadians(-45.0))
                 .build();
 
     }
 
-    public Command doAuto() {
+    public Command doAuto1() {
         return new SequentialGroup(
                 new ParallelGroup(
-                        intake.INSTANCE.IntakeIn(),
+                        //intake.INSTANCE.IntakeIn(),
                         flyLeftShooter.INSTANCE.flySetRPM(shootRPM),
                         flyRightShooter.INSTANCE.flySetRPM(shootRPM),
-                        new FollowPath(line1, true, 0.6)
+                        new FollowPath(line1, true, 0.7)
                 ),
-                new Delay(0.25),
+                new Delay(0.75),
                 new ParallelGroup(
-                        backLauncher.INSTANCE.shootCycle(),
-                        new SequentialGroup(
-                                new Delay(0.15),
-                                frontLauncher.INSTANCE.shootCycle()),
-
+                        //ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()),
+                        new InstantCommand(()-> {isShooting=true;}),
 
                         new SequentialGroup(
-                                new Delay(1.5),
-                                new FollowPath(line2, true, 0.6)
+                                new Delay(3.0),
+                                new FollowPath(line2, true, 0.7)
                         )
                 ),
-                new Delay(0.25),
-                new FollowPath(line3, true, 0.25),
-                new Delay(0.25),
-                new FollowPath(line4, true, 0.6),
-                new Delay(0.25),
-                new ParallelGroup(
-                        backLauncher.INSTANCE.shootCycle(),
-                        new SequentialGroup(
-                                new Delay(0.15),
-                                frontLauncher.INSTANCE.shootCycle()),
+                new Delay(0.25)
 
 
-                        new SequentialGroup(
-                                new Delay(1.5),
-                                new FollowPath(line5, true, 0.6)
-                        )
-                ),
-                new Delay(0.25),
-                new FollowPath(line6, true, 0.25),
-                new Delay(0.25),
-                new FollowPath(line7, true, 0.5),
-                new Delay(1.0),
-                new ParallelGroup(
-                        backLauncher.INSTANCE.shootCycle(),
-                        new SequentialGroup(
-                                new Delay(0.15),
-                                frontLauncher.INSTANCE.shootCycle()),
-
-
-                        new SequentialGroup(
-                                new Delay(1.5),
-                                new FollowPath(line11, true, 0.6)
-                        )
-
-//                ),
-//                new Delay(0.25),
-//                new FollowPath(line9, true, 0.3),
-//                new Delay(0.25),
-//                new FollowPath(line10, true, 0.85),
-//                new Delay(0.25),
-//                new ParallelGroup(
-//                        backTwo.INSTANCE.shootCycle(),
-//                        frontOne.INSTANCE.shootCycle()
-//                        ,
-//
-//                        new SequentialGroup(
-//                                new Delay(1.5),
-//                                new FollowPath(line11, true, 1.0)
-//                        )
-                )
 
         );
 
 
     }
+    public Command doAuto2() {
+        return new SequentialGroup(
+                new FollowPath(line3, true, 0.3),
+                new Delay(0.25),
+                new FollowPath(line4, true, 0.7),
+                new Delay(0.25),
+                new ParallelGroup(
+//                        new SequentialGroup(
+//                                new InstantCommand(()-> {intakeLED.INSTANCE.frontColor();}),
+//                                new InstantCommand(()-> {intakeLED.INSTANCE.middleColor();}),
+//                                new InstantCommand(()-> {intakeLED.INSTANCE.backColor();}),
+                        //
+                        // ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()),
+                        new InstantCommand(()-> {isShooting=true;}),
+//                        ),
 
 
 
+                        new SequentialGroup(
+                                new Delay(3.0),
+                                new FollowPath(line5, true, 0.7)
+                        )
+                )
+        );
+
+
+    }
+    public Command doAuto3() {
+        return new SequentialGroup(
+                new Delay(0.25),
+                new FollowPath(line6, true, 0.3),
+                new Delay(0.25),
+                new FollowPath(line7, true, 0.7),
+                new Delay(1.0),
+                new ParallelGroup(
+//                        ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()),
+                        new InstantCommand(()-> {isShooting=true;}),
+
+                        new SequentialGroup(
+                                new Delay(3.0),
+                                new FollowPath(line8, true, 1.0)
+                        )
+                )
+        );
+    }
 
     /** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
     @Override
     public void onUpdate() {
-
+        counter++;
         // These loop the movements of the robot, these must be called continuously in order to work
         follower().update();
+        if(isShooting){
+            isShooting = false;
+            ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()).schedule();
+
+        }
+
 
         // Feedback to Driver Hub for debugging
 
         telemetry.addData("x", follower().getPose().getX());
         telemetry.addData("y", follower().getPose().getY());
-        telemetry.addData("heading", follower().getPose().getHeading());
+        telemetry.addData("heading", Math.toRadians(follower().getPose().getHeading()));
+
+        telemetry.addData("Order", order);
+        telemetry.addData("Updates", counter);
+
         telemetry.update();
     }
 
     /** This method is called once at the init of the OpMode. **/
     @Override
     public void onInit() {
-        bT = new ServoEx(frontTwoName);
-        bT.getServo().setDirection(Servo.Direction.FORWARD);
-        fO = new ServoEx(backOneName);
-        fO.getServo().setDirection(Servo.Direction.REVERSE);
-
-        bT.setPosition(0.05);
-        fO.setPosition(0.05);
+//        b = new ServoEx(backName);
+//        b.getServo().setDirection(Servo.Direction.FORWARD);
+//        f = new ServoEx(frontName);
+//        f.getServo().setDirection(Servo.Direction.FORWARD);
+//        m = new ServoEx(midName);
+//        m.getServo().setDirection(Servo.Direction.REVERSE);
+//
+//        b.setPosition(0.05);
+//        f.setPosition(0.05);
+//        m.setPosition(0.05);
 
 
 //        follower = Constants.createFollower(hardwareMap);
@@ -303,9 +289,15 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
     /** This method is called continuously after Init while waiting for "play". **/
     @Override
     public void onWaitForStart() {
-//        telemetryAprilTag();
-//        // Push telemetry to the Driver Station.
-//        telemetry.update();
+        int av = telemetryAprilTag();
+        if(av>=21&&av<=23){
+            aprilValue = av;
+        }
+        else{
+            aprilValue = -1;
+        }
+        telemetry.addData("AprilValue", aprilValue);
+        telemetry.update();
     }
 
     /** This method is called once at the start of the OpMode.
@@ -313,10 +305,13 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
     @Override
     public void onStartButtonPressed() {
 
-        bT.setPosition(0.0);
-        fO.setPosition(0.0);
+        new SequentialGroup(
+                doAuto1(),
+                doAuto2(),
+                doAuto3()
+        ).schedule();
 
-        doAuto().schedule();
+        USE_WEBCAM = false;
     }
 
     /** We do not use this because everything should automatically disable **/
@@ -342,9 +337,10 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
     /**
      * Display info (using telemetry) for a recognized AprilTag.
      */
-    private void telemetryAprilTag() {
+    private int telemetryAprilTag() {
         List<AprilTagDetection> myAprilTagDetections;
         AprilTagDetection myAprilTagDetection;
+        int returnValue = 0;
 
         // Get a list of AprilTag detections.
         myAprilTagDetections = myAprilTagProcessor.getDetections();
@@ -358,7 +354,12 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 telemetry.addLine("==== (ID " + myAprilTagDetection.id + ") " + myAprilTagDetection.metadata.name);
                 telemetry.addLine("XYZ " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.x, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.y, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.z, 6, 1) + "  (inch)");
                 telemetry.addLine("PRY " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.pitch, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.roll, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.yaw, 6, 1) + "  (deg)");
+
                 telemetry.addLine("RBE " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.range, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.bearing, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.elevation, 6, 1) + "  (inch, deg, deg)");
+                if(myAprilTagDetection.id>=21&&myAprilTagDetection.id<=23){
+                    returnValue = myAprilTagDetection.id;
+                }
+
             } else {
                 telemetry.addLine("==== (ID " + myAprilTagDetection.id + ") Unknown");
                 telemetry.addLine("Center " + JavaUtil.formatNumber(myAprilTagDetection.center.x, 6, 0) + "" + JavaUtil.formatNumber(myAprilTagDetection.center.y, 6, 0) + " (pixels)");
@@ -369,9 +370,97 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
         telemetry.addLine("XYZ = X (Right), Y (Forward), Z (Up) dist.");
         telemetry.addLine("PRY = Pitch, Roll & Yaw (XYZ Rotation)");
         telemetry.addLine("RBE = Range, Bearing & Elevation");
+        return returnValue;
+
     }
 
 
 
+    private Command ShootPattern(String fc, String mc, String bc){
+        order = "";
+        launcher launchOne;
+        launcher launchTwo;
+        launcher launchThree;
+        if(aprilValue==21){
+            if(Objects.equals(fc, "green")){
+                order = "FMB";
+            }
+            else if (Objects.equals(mc, "green")){
+                order = "MBF";
+            }
+            else if(Objects.equals(bc, "green")){
+                order = "BFM";
+            }
+            else{
+                order = "FMB";
+            }
+        }
+        else if(aprilValue == 22){
+            if(Objects.equals(fc, "green")){
+                order = "BFM";
+            }
+            else if (Objects.equals(mc, "green")){
+                order = "FMB";
+            }
+            else if(Objects.equals(bc, "green")){
+                order = "MBF";
+            }
+            else{
+                order = "FMB";
+            }
+        }
+        else if(aprilValue == 23){
+            if(Objects.equals(fc, "green")){
+                order = "MBF";
+            }
+            else if (Objects.equals(mc, "green")){
+                order = "BFM";
+            }
+            else if(Objects.equals(bc, "green")){
+                order = "FMB";
+            }
+            else{
+                order = "FMB";
+            }
+        }
+        else{
+            order = "FMB";
+        }
+
+        if(order =="MBF") {
+            launchOne = middleLauncher.INSTANCE;
+            launchTwo = backLauncher.INSTANCE;
+            launchThree = frontLauncher.INSTANCE;
+        }
+        else if(order =="BFM") {
+            launchOne = backLauncher.INSTANCE;
+            launchTwo = frontLauncher.INSTANCE;
+            launchThree = middleLauncher.INSTANCE;
+        }
+        else {
+            launchOne = frontLauncher.INSTANCE;
+            launchTwo = middleLauncher.INSTANCE;
+            launchThree = backLauncher.INSTANCE;
+        }
+
+        order = "";
+
+        return new ParallelGroup(
+                launchOne.shootCycle(),
+                new SequentialGroup(
+                        new Delay(1.0),
+                        new ParallelGroup(
+                                launchTwo.shootCycle(),
+                                new SequentialGroup(
+                                        new Delay(1.0),
+                                        launchThree.shootCycle()
+                                )
+                        )
+                )
+        );
+
+//        return new SequentialGroup(new Delay (0)
+//        );
+    }
 
 }
