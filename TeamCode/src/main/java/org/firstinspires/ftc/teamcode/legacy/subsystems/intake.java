@@ -25,7 +25,7 @@ public class intake implements Subsystem {
     public String intakeName = "intake";
 
     public Command IntakeIn() {
-        return new SetPower(intake, 1);
+        return new SetPower(intake, 0.9);
     }
 
     public Command IntakeOff() {
@@ -33,13 +33,13 @@ public class intake implements Subsystem {
     }
 
     public Command IntakeOut() {
-        return new SetPower(intake, -1);
+        return new SetPower(intake, -0.4);
     }
 
     @Override
     public void initialize() {
         intake = new MotorEx(intakeName);
-        intake.getMotor().setDirection(DcMotorSimple.Direction.FORWARD);
+        intake.getMotor().setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     @Override
