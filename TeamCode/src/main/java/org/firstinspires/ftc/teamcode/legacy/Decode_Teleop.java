@@ -64,8 +64,8 @@ public class Decode_Teleop extends NextFTCOpMode {
     private double shootRPM = 0.0;
 
     static double frontWait = 0.00;
-    static double middleWait = 0.00;
-    static double backWait = 0.00;
+    static double middleWait = 0.55;
+    static double backWait = 1.1;
 
     public MecanumDriverControlled driverControlled;
 
@@ -175,6 +175,21 @@ public class Decode_Teleop extends NextFTCOpMode {
         Gamepads.gamepad1().x().whenBecomesTrue(backLauncher.INSTANCE.shootCycle());
         Gamepads.gamepad1().a().whenBecomesTrue(middleLauncher.INSTANCE.shootCycle());
         Gamepads.gamepad1().b().whenBecomesTrue(frontLauncher.INSTANCE.shootCycle());
+
+        Gamepads.gamepad1().dpadUp().whenBecomesTrue(
+                new InstantCommand(() -> {
+                    shootRPM = 2200.0;
+                    flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
+                    flyRightShooter.INSTANCE.flySetRPM(shootRPM);
+                }
+        ));
+        Gamepads.gamepad1().dpadDown().whenBecomesTrue(
+                new InstantCommand(() -> {
+                    shootRPM = 1700.0;
+                    flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
+                    flyRightShooter.INSTANCE.flySetRPM(shootRPM);
+                }
+        ));
 
 
         Gamepads.gamepad2().rightTrigger().greaterThan(0.1).whenTrue(new InstantCommand(() -> {
