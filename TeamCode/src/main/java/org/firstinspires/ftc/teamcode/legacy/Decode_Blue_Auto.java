@@ -68,10 +68,11 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
 
 //    private Follower follower;
 
-    private final Pose startPose = new Pose(144-120.643, 130, Math.toRadians(51.0));
-    private final Pose shootPose1 = new Pose(144-114.5, 123.6, Math.toRadians(53.0));
-    private final Pose shootPose2 = new Pose(144-111.5, 116.5, Math.toRadians(57.0));
-    private final Pose shootPose3 = new Pose(144-111.0, 110.5, Math.toRadians(57.0));
+    private final Pose startPose = new Pose(22.0, 128.0, Math.toRadians(51.0));
+    private final Pose shootPose1 = new Pose(37.5, 113.5, Math.toRadians(51.0));
+    private final Pose shootPose2 = new Pose(36.5, 104.0, Math.toRadians(51.0));
+    private final Pose shootPose3 = new Pose(41.0, 101.0, Math.toRadians(51.0));
+    private final Pose shootPose4 = new Pose(41.0, 99.0, Math.toRadians(51.0));
 
 
     private final int shootRPM = 1700; //2000 without
@@ -82,7 +83,7 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
     VisionPortal myVisionPortal;
 
 
-    private PathChain line1, line2, line3, line4, line5, line6, line7, line8;
+    private PathChain line1, line2, line3, line4, line5, line6, line7, line8, line9, line10, line11;
 
     public void buildPaths() {
 
@@ -90,7 +91,7 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 .addPath(
                         new BezierLine(startPose, shootPose1)
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(53.0))
+                .setLinearHeadingInterpolation(Math.toRadians(51.0), Math.toRadians(51.0))
                 .build();
 
         line2 = follower()
@@ -98,13 +99,13 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 .addPath(
                         new BezierLine(shootPose1, new Pose(144-98.000, 83.750+4.5))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(53.0), Math.toRadians(180.0))
+                .setLinearHeadingInterpolation(Math.toRadians(51.0), Math.toRadians(180.0))
                 .build();
 
         line3 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(144-98.000, 83.750+4.5), new Pose(144-123.000, 83.750+4.5))
+                        new BezierLine(new Pose(144-98.000, 83.750+4.5), new Pose(144-120.000, 83.750+4.5))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180.0))
                 .build();
@@ -114,21 +115,21 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 .addPath(
                         new BezierLine(new Pose(144-124.000, 83.750+4.5), shootPose2)
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180.0), Math.toRadians(57.0))
+                .setLinearHeadingInterpolation(Math.toRadians(180.0), Math.toRadians(51.0))
                 .build();
 
         line5 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose2, new Pose(144-98.000, 59.750+4.5))
+                        new BezierLine(shootPose2, new Pose(144-98.000, 59.750+6))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(57.0), Math.toRadians(180.0))
+                .setLinearHeadingInterpolation(Math.toRadians(51.0), Math.toRadians(180.0))
                 .build();
 
         line6 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(144-98.000, 59.750+4.5), new Pose(144-124.000, 59.750+4.5))
+                        new BezierLine(new Pose(144-98.000, 59.750+6), new Pose(144-124.000, 59.750+6))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180.0))
                 .build();
@@ -137,20 +138,53 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(144-124.000, 59.750+4.5),
-                                new Pose(144-109.100, 55.600+4.5),
+                                new Pose(144-124.000, 59.750+6),
+                                new Pose(144-109.100, 55.600+6),
                                 shootPose3
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(180.0), Math.toRadians(57.0))
+                .setLinearHeadingInterpolation(Math.toRadians(180.0), Math.toRadians(51.0))
                 .build();
 
         line8 = follower()
+                .pathBuilder().addPath(
+                        new BezierLine(
+                                shootPose3,
+
+                                new Pose(144-100.000, 36.000+4.5)
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(51.0), Math.toRadians(180.0))
+
+                .build();
+
+        line9 = follower()
+                .pathBuilder().addPath(
+                        new BezierLine(
+                                new Pose(144-100.000, 36.000+4.5),
+
+                                new Pose(144-124.000, 36.000+4.5)
+                        )
+                ).setTangentHeadingInterpolation()
+
+                .build();
+
+        line10 = follower()
+                .pathBuilder().addPath(
+                        new BezierCurve(
+                                new Pose(144-124.000, 36.000+4.5),
+                                new Pose(144-113.023, 41.351),
+                                shootPose4
+                        )
+                ).setLinearHeadingInterpolation(Math.toRadians(180.0), Math.toRadians(51.0))
+
+                .build();
+
+        line11 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(shootPose3, new Pose(144-122.000, 99.000))
+                        new BezierLine(shootPose4, new Pose(144-120.000, 96.000))
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(57.0), Math.toRadians(-45.0))
+                .setLinearHeadingInterpolation(Math.toRadians(51.0), Math.toRadians(-45.0))
                 .build();
 
     }
@@ -161,16 +195,16 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                         //intake.INSTANCE.IntakeIn(),
                         flyLeftShooter.INSTANCE.flySetRPM(shootRPM),
                         flyRightShooter.INSTANCE.flySetRPM(shootRPM),
-                        new FollowPath(line1, true, 0.7)
+                        new FollowPath(line1, true, 0.75)
                 ),
-                new Delay(0.75),
+                new Delay(0.25),
                 new ParallelGroup(
                         //ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()),
                         new InstantCommand(()-> {isShooting=true;}),
 
                         new SequentialGroup(
-                                new Delay(3.0),
-                                new FollowPath(line2, true, 0.7)
+                                new Delay(2.0),
+                                new FollowPath(line2, true, 0.85)
                         )
                 ),
                 new Delay(0.25)
@@ -183,9 +217,9 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
     }
     public Command doAuto2() {
         return new SequentialGroup(
-                new FollowPath(line3, true, 0.3),
+                new FollowPath(line3, true, 0.5),
                 new Delay(0.25),
-                new FollowPath(line4, true, 0.7),
+                new FollowPath(line4, true, 0.85),
                 new Delay(0.25),
                 new ParallelGroup(
 //                        new SequentialGroup(
@@ -200,8 +234,8 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
 
 
                         new SequentialGroup(
-                                new Delay(3.0),
-                                new FollowPath(line5, true, 0.7)
+                                new Delay(2.0),
+                                new FollowPath(line5, true, 0.85)
                         )
                 )
         );
@@ -211,19 +245,43 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
     public Command doAuto3() {
         return new SequentialGroup(
                 new Delay(0.25),
-                new FollowPath(line6, true, 0.3),
+                new FollowPath(line6, true, 0.5),
                 new Delay(0.25),
-                new FollowPath(line7, true, 0.7),
-                new Delay(1.0),
+                new FollowPath(line7, true, 0.85),
+                new Delay(0.25),
                 new ParallelGroup(
 //                        ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()),
                         new InstantCommand(()-> {isShooting=true;}),
 
                         new SequentialGroup(
-                                new Delay(3.0),
-                                new FollowPath(line8, true, 1.0)
+                                new Delay(2.0),
+                                new FollowPath(line8, true, 0.85)
+                        )
+                ),
+                new Delay(0.25),
+                new FollowPath(line9, true, 0.5),
+                new Delay(0.25),
+                new FollowPath(line10, true, 0.85),
+                new Delay(0.25),
+                new ParallelGroup(
+//                        new SequentialGroup(
+//                                new InstantCommand(()-> {intakeLED.INSTANCE.frontColor();}),
+//                                new InstantCommand(()-> {intakeLED.INSTANCE.middleColor();}),
+//                                new InstantCommand(()-> {intakeLED.INSTANCE.backColor();}),
+                        //
+                        // ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()),
+                        new InstantCommand(()-> {isShooting=true;}),
+//                        ),
+
+
+
+                        new SequentialGroup(
+                                new Delay(2.0),
+                                new FollowPath(line11, true, 1.0)
                         )
                 )
+
+
         );
     }
 
@@ -354,12 +412,10 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 telemetry.addLine("==== (ID " + myAprilTagDetection.id + ") " + myAprilTagDetection.metadata.name);
                 telemetry.addLine("XYZ " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.x, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.y, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.z, 6, 1) + "  (inch)");
                 telemetry.addLine("PRY " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.pitch, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.roll, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.yaw, 6, 1) + "  (deg)");
-
                 telemetry.addLine("RBE " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.range, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.bearing, 6, 1) + " " + JavaUtil.formatNumber(myAprilTagDetection.ftcPose.elevation, 6, 1) + "  (inch, deg, deg)");
                 if(myAprilTagDetection.id>=21&&myAprilTagDetection.id<=23){
                     returnValue = myAprilTagDetection.id;
                 }
-
             } else {
                 telemetry.addLine("==== (ID " + myAprilTagDetection.id + ") Unknown");
                 telemetry.addLine("Center " + JavaUtil.formatNumber(myAprilTagDetection.center.x, 6, 0) + "" + JavaUtil.formatNumber(myAprilTagDetection.center.y, 6, 0) + " (pixels)");
@@ -448,11 +504,11 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
         return new ParallelGroup(
                 launchOne.shootCycle(),
                 new SequentialGroup(
-                        new Delay(1.0),
+                        new Delay(0.7),
                         new ParallelGroup(
                                 launchTwo.shootCycle(),
                                 new SequentialGroup(
-                                        new Delay(1.0),
+                                        new Delay(0.7),
                                         launchThree.shootCycle()
                                 )
                         )
