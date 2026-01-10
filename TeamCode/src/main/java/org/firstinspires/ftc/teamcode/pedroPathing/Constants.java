@@ -21,7 +21,7 @@ import dev.nextftc.control.ControlSystem;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(23.2)
+            .mass(13.15)
             .forwardZeroPowerAcceleration(-25.9588070151)
             .lateralZeroPowerAcceleration(-53.1563064896)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.01, 0, 0, 0))
