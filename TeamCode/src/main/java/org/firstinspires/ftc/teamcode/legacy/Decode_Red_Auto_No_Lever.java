@@ -5,22 +5,17 @@ import com.pedropathing.paths.PathChain;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.hardware.Servo;
 
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.backLED;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.backLauncher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyLeftShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyRightShooter;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.frontLED;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.frontLauncher;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.launcher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.intakeLED;
-import org.firstinspires.ftc.teamcode.legacy.subsystems.middleLED;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.middleLauncher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.shootersLED;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -40,15 +35,14 @@ import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
-import dev.nextftc.hardware.impl.ServoEx;
 
 import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 
 
-@Autonomous(name = "Decode Red Auto")
-public class Decode_Red_Auto extends NextFTCOpMode {
-    public Decode_Red_Auto(){
+@Autonomous(name = "Decode Red Auto No Lever")
+public class Decode_Red_Auto_No_Lever extends NextFTCOpMode {
+    public Decode_Red_Auto_No_Lever(){
         addComponents(
                 new PedroComponent(Constants::createFollower),
                 new SubsystemComponent(shootersLED.INSTANCE),
@@ -203,7 +197,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                         new InstantCommand(()-> {isShooting=true;}),
 
                         new SequentialGroup(
-                                new Delay(2.1),
+                                new Delay(1.5),
                                 new FollowPath(line2, true, 0.85)
                                 )
                         ),
@@ -234,7 +228,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
 
                         new SequentialGroup(
-                                new Delay(2.1),
+                                new Delay(1.5),
                                 new FollowPath(line5, true, 0.85)
                         )
                 )
@@ -254,7 +248,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
                         new InstantCommand(()-> {isShooting=true;}),
 
                         new SequentialGroup(
-                                new Delay(2.1),
+                                new Delay(1.5),
                                 new FollowPath(line8, true, 0.85)
                         )
                 ),
@@ -276,7 +270,7 @@ public class Decode_Red_Auto extends NextFTCOpMode {
 
 
                 new SequentialGroup(
-                        new Delay(2.1),
+                        new Delay(1.5),
                         new FollowPath(line11, true, 1.0)
                 )
         )
@@ -504,11 +498,11 @@ public class Decode_Red_Auto extends NextFTCOpMode {
         return new ParallelGroup(
                     launchOne.shootCycle(),
                     new SequentialGroup(
-                            new Delay(0.7),
+                            new Delay(0.55),
                             new ParallelGroup(
                                     launchTwo.shootCycle(),
                                     new SequentialGroup(
-                                            new Delay(0.7),
+                                            new Delay(0.55),
                                             launchThree.shootCycle()
                                     )
                             )

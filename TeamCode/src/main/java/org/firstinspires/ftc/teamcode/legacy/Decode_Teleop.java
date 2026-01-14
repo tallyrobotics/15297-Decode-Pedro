@@ -172,9 +172,48 @@ public class Decode_Teleop extends NextFTCOpMode {
 
         Gamepads.gamepad2().y().whenBecomesTrue(intake.INSTANCE.IntakeOff());
 
-        Gamepads.gamepad1().x().whenBecomesTrue(backLauncher.INSTANCE.shootCycle());
-        Gamepads.gamepad1().a().whenBecomesTrue(middleLauncher.INSTANCE.shootCycle());
-        Gamepads.gamepad1().b().whenBecomesTrue(frontLauncher.INSTANCE.shootCycle());
+        Gamepads.gamepad1().x().whenBecomesTrue(            new ParallelGroup(
+
+                new SequentialGroup(
+                        new Delay(frontWait),
+                        backLauncher.INSTANCE.shootCycle()
+                ),
+                new SequentialGroup(
+                        new Delay(middleWait),
+                        frontLauncher.INSTANCE.shootCycle()
+                ),
+                new SequentialGroup(
+                        new Delay(backWait),
+                        middleLauncher.INSTANCE.shootCycle()
+                )));
+        Gamepads.gamepad1().a().whenBecomesTrue(            new ParallelGroup(
+
+                new SequentialGroup(
+                        new Delay(frontWait),
+                        middleLauncher.INSTANCE.shootCycle()
+                ),
+                new SequentialGroup(
+                        new Delay(middleWait),
+                        backLauncher.INSTANCE.shootCycle()
+                ),
+                new SequentialGroup(
+                        new Delay(backWait),
+                        frontLauncher.INSTANCE.shootCycle()
+                )));
+        Gamepads.gamepad1().b().whenBecomesTrue(            new ParallelGroup(
+
+                new SequentialGroup(
+                        new Delay(frontWait),
+                        frontLauncher.INSTANCE.shootCycle()
+                ),
+                new SequentialGroup(
+                        new Delay(middleWait),
+                        middleLauncher.INSTANCE.shootCycle()
+                ),
+                new SequentialGroup(
+                        new Delay(backWait),
+                        backLauncher.INSTANCE.shootCycle()
+                )));
 
         Gamepads.gamepad1().dpadUp().whenBecomesTrue(
                 new InstantCommand(() -> {
@@ -205,20 +244,17 @@ public class Decode_Teleop extends NextFTCOpMode {
             new ParallelGroup(
 
                     new SequentialGroup(
-                            new Delay(frontWait),
+                            new Delay(0.00),
                             frontLauncher.INSTANCE.shootCycle()
                     ),
                     new SequentialGroup(
-                            new Delay(middleWait),
+                            new Delay(0.25),
                             middleLauncher.INSTANCE.shootCycle()
                     ),
                     new SequentialGroup(
-                            new Delay(backWait),
+                            new Delay(0.4),
                             backLauncher.INSTANCE.shootCycle()
                     )
-
-
-
             )
         );
 

@@ -39,7 +39,7 @@ public class intake implements Subsystem {
     @Override
     public void initialize() {
         intake = new MotorEx(intakeName);
-        intake.getMotor().setDirection(DcMotorSimple.Direction.REVERSE);
+        intake.getMotor().setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     @Override

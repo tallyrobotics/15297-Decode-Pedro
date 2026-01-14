@@ -8,15 +8,18 @@ import dev.nextftc.core.commands.groups.SequentialGroup;
 import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
-
+import com.bylazar.configurables.annotations.Configurable;
+@Configurable
 public abstract class launcher implements Subsystem {
 
 public launcher(String launchName, Boolean isReversed) {name = launchName; reverse = isReversed;}
 
 
 
-    public static final Double down = 0.15;
-    public static final Double up = 1.0;
+    public static Double down = 0.1;
+    public static Double up = 0.95;
+
+
 
     private boolean isUp = false;
 
@@ -36,17 +39,24 @@ public launcher(String launchName, Boolean isReversed) {name = launchName; rever
     }
 
     public Command up(){
-        return new SetPosition(lift, up);
+
+
+            return new SetPosition(lift, up);
+
+
     }
 
     public Command down(){
+
+
+
         return new SetPosition(lift, down);
     }
 
     public Command shootCycle() {
             return new SequentialGroup(
                     up(),
-                    new Delay(0.5),
+                    new Delay(0.8),
                     down()
             );
     }
