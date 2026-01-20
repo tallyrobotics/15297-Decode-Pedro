@@ -25,7 +25,7 @@ public class intake implements Subsystem {
     public String intakeName = "intake";
 
     public Command IntakeIn() {
-        return new SetPower(intake, 0.9);
+        return new SetPower(intake, 1.0);
     }
 
     public Command IntakeOff() {

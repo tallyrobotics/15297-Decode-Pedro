@@ -46,7 +46,7 @@ import static dev.nextftc.extensions.pedro.PedroComponent.follower;
 
 
 
-@Autonomous(name = "Decode Blue Auto")
+@Autonomous(name = "Decode Blue Auto No Lever")
 public class Decode_Blue_Auto extends NextFTCOpMode {
     public Decode_Blue_Auto(){
         addComponents(
@@ -69,8 +69,8 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
 //    private Follower follower;
 
     private final Pose startPose = new Pose(22.0, 128.0, Math.toRadians(51.0));
-    private final Pose shootPose1 = new Pose(37.5, 113.5, Math.toRadians(51.0));
-    private final Pose shootPose2 = new Pose(36.5, 104.0, Math.toRadians(51.0));
+    private final Pose shootPose1 = new Pose(37.5, 114.5, Math.toRadians(51.0));
+    private final Pose shootPose2 = new Pose(36.5, 106.0, Math.toRadians(51.0));
     private final Pose shootPose3 = new Pose(41.0, 101.0, Math.toRadians(51.0));
     private final Pose shootPose4 = new Pose(41.0, 99.0, Math.toRadians(51.0));
 
@@ -105,7 +105,7 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
         line3 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(144-98.000, 83.750+4.5), new Pose(144-120.000, 83.750+4.5))
+                        new BezierLine(new Pose(144-98.000, 83.750+4.5), new Pose(144-122.000, 83.750+4.5))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180.0))
                 .build();
@@ -113,7 +113,7 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
         line4 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(144-124.000, 83.750+4.5), shootPose2)
+                        new BezierLine(new Pose(144-122.000, 83.750+4.5), shootPose2)
                 )
                 .setLinearHeadingInterpolation(Math.toRadians(180.0), Math.toRadians(51.0))
                 .build();
@@ -129,7 +129,7 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
         line6 = follower()
                 .pathBuilder()
                 .addPath(
-                        new BezierLine(new Pose(144-98.000, 59.750+6), new Pose(144-124.000, 59.750+6))
+                        new BezierLine(new Pose(144-98.000, 59.750+6), new Pose(144-128.000, 59.750+6))
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(180.0))
                 .build();
@@ -138,7 +138,7 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                 .pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                new Pose(144-124.000, 59.750+6),
+                                new Pose(144-128.000, 59.750+6),
                                 new Pose(144-109.100, 55.600+6),
                                 shootPose3
                         )
@@ -162,7 +162,7 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
                         new BezierLine(
                                 new Pose(144-100.000, 36.000+4.5),
 
-                                new Pose(144-124.000, 36.000+4.5)
+                                new Pose(144-128.000, 36.000+4.5)
                         )
                 ).setTangentHeadingInterpolation()
 
@@ -171,7 +171,7 @@ public class Decode_Blue_Auto extends NextFTCOpMode {
         line10 = follower()
                 .pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(144-124.000, 36.000+4.5),
+                                new Pose(144-128.000, 36.000+4.5),
                                 new Pose(144-113.023, 41.351),
                                 shootPose4
                         )

@@ -18,7 +18,7 @@ public class intakeLED extends SubsystemGroup {
     @Override
     public void periodic() {
         super.periodic();
-        if((frontLED.INSTANCE.getDistance()<5.5&&middleLED.INSTANCE.getDistance()<4.5&&backLED.INSTANCE.getDistance()<5.7)||
+        if((frontLED.INSTANCE.getDistance()<5.3&&middleLED.INSTANCE.getDistance()<4.4&&backLED.INSTANCE.getDistance()<5.8)||
         !ActiveOpMode.isStarted())
         {
             intake.INSTANCE.IntakeOff().schedule();
