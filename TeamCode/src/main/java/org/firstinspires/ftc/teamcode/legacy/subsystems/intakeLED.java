@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
+import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.SubsystemGroup;
 import dev.nextftc.ftc.ActiveOpMode;
 
@@ -13,12 +15,21 @@ public class intakeLED extends SubsystemGroup {
                 middleLED.INSTANCE,
                 backLED.INSTANCE
         );
+
     }
 
+    boolean priority = false;
+    public Command PriorityOn(){
+        return new InstantCommand(()->{priority = true;});
+    }
+
+    public Command PriorityOff(){
+        return new InstantCommand(()->{priority = false;});
+    }
     @Override
     public void periodic() {
         super.periodic();
-        if((frontLED.INSTANCE.getDistance()<5.3&&middleLED.INSTANCE.getDistance()<4.4&&backLED.INSTANCE.getDistance()<5.8)||
+        if((!priority&&frontLED.INSTANCE.getDistance()<7.0&&middleLED.INSTANCE.getDistance()<4.5&&backLED.INSTANCE.getDistance()<5.0)||
         !ActiveOpMode.isStarted())
         {
             intake.INSTANCE.IntakeOff().schedule();
