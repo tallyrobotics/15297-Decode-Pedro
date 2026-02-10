@@ -22,12 +22,12 @@ import dev.nextftc.control.ControlSystem;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(13.15)
-            .forwardZeroPowerAcceleration(-32.49269045)//-38.493816196, -31.758151072886, -27.22610409475
-            .lateralZeroPowerAcceleration(-91.010590732)//-84.513153348, -99.67502078995, -88.8435980572
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.125, 0, 0, 0))
-            .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0, 0.01))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.045, 0, 0.0,0.0, 0.0))
+            .mass(11.35)
+            .forwardZeroPowerAcceleration(-27.7409466667)//-38.493816196, -31.758151072886, -27.22610409475
+            .lateralZeroPowerAcceleration(-73.5227566667)//-84.513153348, -99.67502078995, -88.8435980572
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.125, 0, 0.015, 0))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.1, 0.01))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.045, 0, 0.0015,0.0, 0.0))
             .centripetalScaling(0.00075);
     public static MecanumConstants driverConstants = new MecanumConstants()
             .maxPower(1.0)
@@ -39,42 +39,44 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .xVelocity(72.761491057)
-            .yVelocity(51.1936930945);
+            .xVelocity(71.197185)
+            .yVelocity(51.6225033333);
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
-    public static ThreeWheelIMUConstants localizerConstants = new ThreeWheelIMUConstants()
-            .forwardTicksToInches(0.002004585898)
-            .strafeTicksToInches(0.00199865671847) //-0.00199865671847
-            .turnTicksToInches(0.001985945224)
-            .leftPodY(4.3125)
-            .rightPodY(-4.3125)
-            .strafePodX(1.125)
-            .leftEncoder_HardwareMapName("leftRear")
-            .rightEncoder_HardwareMapName("leftFront")
-            .strafeEncoder_HardwareMapName("rightRear")
-            .leftEncoderDirection(Encoder.REVERSE)
-            .rightEncoderDirection(Encoder.REVERSE)
-            .strafeEncoderDirection(Encoder.FORWARD)
-            .IMU_HardwareMapName("imu")
-            .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD, RevHubOrientationOnRobot.UsbFacingDirection.UP));
+//    public static ThreeWheelIMUConstants localizerConstants = new ThreeWheelIMUConstants()
+//            .forwardTicksToInches(0.002004585898)
+//            .strafeTicksToInches(0.00199865671847) //-0.00199865671847
+//            .turnTicksToInches(0.001985945224)
+//            .leftPodY(4.3125)
+//            .rightPodY(-4.3125)
+//            .strafePodX(1.125)
+//            .leftEncoder_HardwareMapName("leftRear")
+//            .rightEncoder_HardwareMapName("leftFront")
+//            .strafeEncoder_HardwareMapName("rightRear")
+//            .leftEncoderDirection(Encoder.REVERSE)
+//            .rightEncoderDirection(Encoder.REVERSE)
+//            .strafeEncoderDirection(Encoder.FORWARD)
+//            .IMU_HardwareMapName("imu")
+//            .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD, RevHubOrientationOnRobot.UsbFacingDirection.UP));
 
-//    public static PinpointConstants localizerConstants = new PinpointConstants()
-//            .forwardPodY(-109.538/25.4) // -109.538 mm / 2.54 inches
-//            .strafePodX(89.048/25.4) //need to change  89.048 mm / 2.54 inches
+    public static PinpointConstants localizerConstants = new PinpointConstants()
+            .forwardPodY(-109) // /25.4
+            .strafePodX(-14) // /25.4
+            .distanceUnit(DistanceUnit.MM)
 //            .distanceUnit(DistanceUnit.INCH)
-//            .hardwareMapName("pinpoint")
+            .hardwareMapName("pinpoint")
 //            .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-//            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED) //need to change
-//            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD); //need to change
+            .customEncoderResolution(34.31) //34.31
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD) //need to change
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED); //need to change
 
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driverConstants)
-//                .pinpointLocalizer(localizerConstants)
-                .threeWheelIMULocalizer(localizerConstants)
+                .pinpointLocalizer(localizerConstants)
+//                .threeWheelIMULocalizer(localizerConstants)
                 .build();
 
     }
