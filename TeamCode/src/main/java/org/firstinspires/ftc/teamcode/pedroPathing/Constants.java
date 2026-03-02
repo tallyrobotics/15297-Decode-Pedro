@@ -22,12 +22,12 @@ import dev.nextftc.control.ControlSystem;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(11.35)
+            .mass(11.7)
             .forwardZeroPowerAcceleration(-27.7409466667)//-38.493816196, -31.758151072886, -27.22610409475
             .lateralZeroPowerAcceleration(-73.5227566667)//-84.513153348, -99.67502078995, -88.8435980572
             .translationalPIDFCoefficients(new PIDFCoefficients(0.125, 0, 0.015, 0))
             .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.1, 0.01))
-            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.045, 0, 0.0015,0.0, 0.0))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.045, 0, 0.0008,0.0, 0.0))
             .centripetalScaling(0.00075);
     public static MecanumConstants driverConstants = new MecanumConstants()
             .maxPower(1.0)
@@ -39,8 +39,8 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .xVelocity(71.197185)
-            .yVelocity(51.6225033333);
+            .xVelocity(69.96105)
+            .yVelocity(58.47987);
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
 //    public static ThreeWheelIMUConstants localizerConstants = new ThreeWheelIMUConstants()
@@ -60,15 +60,15 @@ public class Constants {
 //            .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD, RevHubOrientationOnRobot.UsbFacingDirection.UP));
 
     public static PinpointConstants localizerConstants = new PinpointConstants()
-            .forwardPodY(-109) // /25.4
-            .strafePodX(-14) // /25.4
+            .forwardPodY(110.8) // /25.4
+            .strafePodX(-34.2) // /25.4
             .distanceUnit(DistanceUnit.MM)
 //            .distanceUnit(DistanceUnit.INCH)
             .hardwareMapName("pinpoint")
 //            .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .customEncoderResolution(34.31) //34.31
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD) //need to change
-            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED); //need to change
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED) //need to change
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD); //need to change
 
 
     public static Follower createFollower(HardwareMap hardwareMap) {
