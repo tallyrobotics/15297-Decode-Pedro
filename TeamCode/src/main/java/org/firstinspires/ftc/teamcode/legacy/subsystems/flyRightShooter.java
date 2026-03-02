@@ -14,7 +14,7 @@ public class flyRightShooter extends flyShooter {// implements Subsystem {
     private static double velPidP = 0.001;
     private static double velPidI = 0.0;
     private static double velPidD = 0.0;
-    public static final flyRightShooter INSTANCE = new flyRightShooter("flyRight", false/*, velPidP, velPidI, velPidD*/);
+    public static final flyRightShooter INSTANCE = new flyRightShooter("flyRight", true/*, velPidP, velPidI, velPidD*/);
 
     public flyRightShooter(String motorName, boolean reverseMotor/*, double p, double i, double d*/) {
         super(motorName, reverseMotor, 0/*, p, i, d*/);

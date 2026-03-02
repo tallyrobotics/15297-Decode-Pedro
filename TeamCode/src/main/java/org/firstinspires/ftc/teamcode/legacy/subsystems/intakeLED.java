@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.SubsystemGroup;
@@ -29,13 +31,18 @@ public class intakeLED extends SubsystemGroup {
     @Override
     public void periodic() {
         super.periodic();
-        if((!priority&&frontLED.INSTANCE.getDistance()<7.0&&middleLED.INSTANCE.getDistance()<4.5&&backLED.INSTANCE.getDistance()<5.0)||
-        !ActiveOpMode.isStarted())
+        if(((!priority&&
+                (frontLED.INSTANCE.getDistance2() != DistanceSensor.distanceOutOfRange ||frontLED.INSTANCE.getDistance3()<frontLED.INSTANCE.maxDist3)&&
+                (middleLED.INSTANCE.getDistance2()!= DistanceSensor.distanceOutOfRange ||middleLED.INSTANCE.getDistance3()<middleLED.INSTANCE.maxDist3)&&
+                (backLED.INSTANCE.getDistance2()!= DistanceSensor.distanceOutOfRange ||backLED.INSTANCE.getDistance3()<backLED.INSTANCE.maxDist3)))
+                || !ActiveOpMode.isStarted())
         {
-            intake.INSTANCE.IntakeOff().schedule();
+//            intake.INSTANCE.IntakeOff().schedule();
+            intake.INSTANCE.off().schedule();
         }
+
         else{
-            intake.INSTANCE.IntakeIn().schedule();
+            intake.INSTANCE.on().schedule();
         }
     }
 
@@ -48,4 +55,5 @@ public class intakeLED extends SubsystemGroup {
     public String backColor(){
         return backLED.INSTANCE.getColor();
     }
+
 }

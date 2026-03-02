@@ -16,8 +16,8 @@ public launcher(String launchName, Boolean isReversed) {name = launchName; rever
 
 
 
-    public static Double down = 0.1;
-    public static Double up = 0.95;
+    public static Double down = 0.0;
+    public static Double up = 1.0;
 
 
 

@@ -40,7 +40,7 @@ public class shootersLED extends SubsystemGroup {
             rpmLED.INSTANCE.Red().schedule();
         }
         else{
-            rpmLED.INSTANCE.Off().schedule();
+            rpmLED.INSTANCE.Off("RPM").schedule();
         }
     }
 }

@@ -17,10 +17,10 @@ import dev.nextftc.hardware.impl.ServoEx;
 import dev.nextftc.hardware.positionable.SetPosition;
 
 public class rpmLED extends LED {
-    public static final rpmLED INSTANCE = new rpmLED("ledRPM", "", "", 0.0);
+    public static final rpmLED INSTANCE = new rpmLED("ledRPM", "", "", "", "", 0.0, 0.0);
 
-    public rpmLED(String ledName, String colorName, String distanceName, Double e) {
-        super(ledName, colorName,distanceName, e);
+    public rpmLED(String ledName, String colorNameR, String colorNameL, String dNR, String dNL, Double dR, Double dL) {
+        super(ledName, colorNameR,colorNameL, dNR, dNL, dR, dL);
     }
 //
 //    public rpmLED() {

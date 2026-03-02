@@ -1,17 +1,10 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 import dev.nextftc.core.commands.Command;
-import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.core.subsystems.Subsystem;
-import dev.nextftc.extensions.pedro.PedroComponent;
-import dev.nextftc.hardware.impl.CRServoEx;
 import dev.nextftc.hardware.impl.MotorEx;
-import dev.nextftc.hardware.positionable.SetPosition;
 import dev.nextftc.hardware.powerable.SetPower;
 
 public class intake implements Subsystem {
@@ -23,18 +16,21 @@ public class intake implements Subsystem {
 
     public MotorEx intake;
     public String intakeName = "intake";
+    private int targetRPM;
 
-    public Command IntakeIn() {
+    public Command on() {
+//        targetRPM = 750;
         return new SetPower(intake, 1.0);
     }
 
-    public Command IntakeOff() {
-        return new SetPower(intake, 0);
+    public Command off() {
+//        targetRPM = 0;
+        return new SetPower(intake, 0.0);
+    }
+    public Command out(){
+        return new SetPower(intake, -0.3);
     }
 
-    public Command IntakeOut() {
-        return new SetPower(intake, -0.4);
-    }
 
     @Override
     public void initialize() {
