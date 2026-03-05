@@ -22,7 +22,7 @@ import dev.nextftc.control.ControlSystem;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(11.7)
+            .mass(13.8)
             .forwardZeroPowerAcceleration(-27.7409466667)//-38.493816196, -31.758151072886, -27.22610409475
             .lateralZeroPowerAcceleration(-73.5227566667)//-84.513153348, -99.67502078995, -88.8435980572
             .translationalPIDFCoefficients(new PIDFCoefficients(0.125, 0, 0.015, 0))
@@ -67,8 +67,8 @@ public class Constants {
             .hardwareMapName("pinpoint")
 //            .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
             .customEncoderResolution(34.31) //34.31
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED) //need to change
-            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD); //need to change
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
 
     public static Follower createFollower(HardwareMap hardwareMap) {
