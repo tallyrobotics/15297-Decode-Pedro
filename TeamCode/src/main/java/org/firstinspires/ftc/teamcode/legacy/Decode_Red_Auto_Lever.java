@@ -62,7 +62,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
 
 //    private Follower follower;
 
-    private final Pose startPose = new Pose(124.9, 125.7, Math.toRadians(-49.25));
+    private final Pose startPose = new Pose(125, 124.3, Math.toRadians(-49.25));
     private final Pose shootPose1 = new Pose(98.7, 97.0, Math.toRadians(-45.0));
 
 
@@ -92,7 +92,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                         new BezierLine(
                                 shootPose1,
 
-                                new Pose(98.700, 86.000)
+                                new Pose(98.700, 84.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
 
@@ -100,9 +100,9 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
 
         line3 = follower().pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(98.700, 86.000),
+                                new Pose(98.700, 84.000),
 
-                                new Pose(121.000, 86.000)
+                                new Pose(121.000, 84.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(0))
 
@@ -110,7 +110,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
 
         line4 = follower().pathBuilder().addPath(
                         new BezierCurve(
-                                new Pose(121.000, 86.000),
+                                new Pose(121.000, 84.000),
                                 new Pose(122.000, 77.000),
                                 new Pose(128.000, 76.000)
                         )
@@ -132,7 +132,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                         new BezierLine(
                                 shootPose1,
 
-                                new Pose(98.700, 62.000)
+                                new Pose(98.700, 60.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
 
@@ -140,9 +140,9 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
 
         line7 = follower().pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(98.700, 62.000),
+                                new Pose(98.700, 60.000),
 
-                                new Pose(121.000, 62.000)
+                                new Pose(121.000, 60.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(0))
 
@@ -150,7 +150,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
 
         line8 = follower().pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(121.000, 62.000),
+                                new Pose(121.000, 60.000),
 
                                 shootPose1
                         )
@@ -162,7 +162,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                         new BezierLine(
                                 shootPose1,
 
-                                new Pose(98.700, 38.000)
+                                new Pose(98.700, 36.000)
                         )
                 ).setLinearHeadingInterpolation(Math.toRadians(-45), Math.toRadians(0))
 
@@ -170,9 +170,9 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
 
         line10 = follower().pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(98.700, 38.000),
+                                new Pose(98.700, 36.000),
 
-                                new Pose(121.000, 38.000)
+                                new Pose(121.000, 36.000)
                         )
                 ).setConstantHeadingInterpolation(Math.toRadians(0))
 
@@ -180,7 +180,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
 
         line11 = follower().pathBuilder().addPath(
                         new BezierLine(
-                                new Pose(121.000, 38.000),
+                                new Pose(121.000, 36.000),
 
                                 shootPose1
                         )
