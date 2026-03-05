@@ -161,7 +161,7 @@ public class Decode_Teleop extends NextFTCOpMode {
         follower().setTeleOpDrive(
                 -gamepad1.left_stick_y*speed,
                 -gamepad1.left_stick_x*speed,
-                -gamepad1.right_stick_x*speed*0.5,
+                -gamepad1.right_stick_x*speed*0.55,
                 true);
 
         telemetry.addData("flyLeft RPM",flyLeftShooter.INSTANCE.flyMotor.getVelocity());
@@ -205,7 +205,7 @@ public class Decode_Teleop extends NextFTCOpMode {
         follower().startTeleopDrive();
 
         intake.INSTANCE.on().schedule();
-
+        intakeLED.INSTANCE.PriorityOn();
         Gamepads.gamepad1().leftBumper().whenTrue(new InstantCommand(() -> {speed=turtle;}));
 
         Gamepads.gamepad1().leftBumper().whenBecomesFalse(new InstantCommand(() -> {speed=normal;}));
@@ -252,15 +252,7 @@ public class Decode_Teleop extends NextFTCOpMode {
 
         Gamepads.gamepad2().dpadDown().whenBecomesTrue(
                 new InstantCommand(() -> {
-                    shootRPM -= 20.0;
-                    flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
-                    flyRightShooter.INSTANCE.flySetRPM(shootRPM);
-                }
-                ));
-
-        Gamepads.gamepad2().dpadLeft().whenBecomesTrue(
-                new InstantCommand(() -> {
-                    shootRPM = -5.0;
+                    shootRPM -= 50.0;
                     flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
                     flyRightShooter.INSTANCE.flySetRPM(shootRPM);
                 }
@@ -268,7 +260,7 @@ public class Decode_Teleop extends NextFTCOpMode {
 
         Gamepads.gamepad2().dpadUp().whenBecomesTrue(
             new InstantCommand(() -> {
-                shootRPM += 20.0;
+                shootRPM += 50.0;
                 flyLeftShooter.INSTANCE.flySetRPM(shootRPM);
                 flyRightShooter.INSTANCE.flySetRPM(shootRPM);
             }
@@ -277,6 +269,13 @@ public class Decode_Teleop extends NextFTCOpMode {
         Gamepads.gamepad2().x().whenBecomesTrue(new InstantCommand(()-> {shootOrder = "BFM";}));
         Gamepads.gamepad2().a().whenBecomesTrue(new InstantCommand(()-> {shootOrder = "MBF";}));
         Gamepads.gamepad2().b().whenBecomesTrue(new InstantCommand(()-> {shootOrder = "FMB";}));
+
+        Gamepads.gamepad2().rightBumper().whenBecomesTrue(
+                intakeLED.INSTANCE.PriorityOn()
+        );
+        Gamepads.gamepad2().leftBumper().whenBecomesFalse(
+                intakeLED.INSTANCE.PriorityOff()
+        );
 
 
         flyRightShooter.INSTANCE.flySetRPM(shootRPM).schedule();
