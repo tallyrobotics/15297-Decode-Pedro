@@ -32,9 +32,9 @@ public class intakeLED extends SubsystemGroup {
     public void periodic() {
         super.periodic();
         if(((!priority&&
-                (frontLED.INSTANCE.getDistance2() != DistanceSensor.distanceOutOfRange ||frontLED.INSTANCE.getDistance3()<frontLED.INSTANCE.maxDist3)&&
-                (middleLED.INSTANCE.getDistance2()!= DistanceSensor.distanceOutOfRange ||middleLED.INSTANCE.getDistance3()<middleLED.INSTANCE.maxDist3)&&
-                (backLED.INSTANCE.getDistance2()!= DistanceSensor.distanceOutOfRange ||backLED.INSTANCE.getDistance3()<backLED.INSTANCE.maxDist3)))
+                (!Double.isNaN(frontLED.INSTANCE.getDistance2()) ||frontLED.INSTANCE.getDistance3()<frontLED.INSTANCE.maxDist3)&&
+                (!Double.isNaN(middleLED.INSTANCE.getDistance2()) ||middleLED.INSTANCE.getDistance3()<middleLED.INSTANCE.maxDist3)&&
+                (!Double.isNaN(backLED.INSTANCE.getDistance2()) ||backLED.INSTANCE.getDistance3()<backLED.INSTANCE.maxDist3)))
                 || !ActiveOpMode.isStarted())
         {
 //            intake.INSTANCE.IntakeOff().schedule();

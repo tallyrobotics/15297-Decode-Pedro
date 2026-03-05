@@ -71,9 +71,6 @@ public abstract class LED implements Subsystem {
 
     public Command Off(String lor) {
             return new SetPosition(led, led.getPosition());
-
-
-
     }
 
     public Command Red() {
@@ -155,7 +152,7 @@ public abstract class LED implements Subsystem {
             // range, and is impacted by ambient light and surface reflectivity.
             ActiveOpMode.telemetry().addData(colSenName2 + " distance (cm)", distance2);
             ActiveOpMode.telemetry().addData(colSenName2 + " color", color2);
-            if (distance2 != DistanceSensor.distanceOutOfRange) {
+            if (!Double.isNaN(distance2)) {
                 if (myNormalizedColors.green >= myNormalizedColors.red && myNormalizedColors.green >= myNormalizedColors.blue) {
                     color2 = "green";
                     Green("R").schedule();
