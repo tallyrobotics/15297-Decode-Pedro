@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.SubsystemGroup;
@@ -32,9 +30,9 @@ public class intakeLED extends SubsystemGroup {
     public void periodic() {
         super.periodic();
         if(((!priority&&
-                (!Double.isNaN(frontLED.INSTANCE.getDistance2()) ||frontLED.INSTANCE.getDistance3()<frontLED.INSTANCE.maxDist3)&&
-                (!Double.isNaN(middleLED.INSTANCE.getDistance2()) ||middleLED.INSTANCE.getDistance3()<middleLED.INSTANCE.maxDist3)&&
-                (!Double.isNaN(backLED.INSTANCE.getDistance2()) ||backLED.INSTANCE.getDistance3()<backLED.INSTANCE.maxDist3)))
+                ((frontLED.INSTANCE.DetectBall()))&&
+                (middleLED.INSTANCE.DetectBall())&&
+                (backLED.INSTANCE.DetectBall())))
                 || !ActiveOpMode.isStarted())
         {
 //            intake.INSTANCE.IntakeOff().schedule();

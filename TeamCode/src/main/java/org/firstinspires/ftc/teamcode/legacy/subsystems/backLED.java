@@ -6,7 +6,7 @@ public class backLED extends LED {
 
 
     public backLED(String ledName, String colorName2, String colorName3, String distName2, String distName3, Double maxDist2, Double maxDist3) {
-            super(ledName, colorName2,colorName3, distName2, distName3, maxDist2, maxDist3);
+            super(ledName, colorName2,colorName3, distName2, distName3, maxDist2, maxDist3, false);
     }
 
 }
