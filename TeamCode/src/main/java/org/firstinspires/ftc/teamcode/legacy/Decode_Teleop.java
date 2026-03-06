@@ -7,6 +7,7 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.legacy.subsystems.backLauncher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.frontLauncher;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.legacy.subsystems.flyLeftShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.flyRightShooter;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.intake;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.intakeLED;
+import org.firstinspires.ftc.teamcode.legacy.subsystems.limeLight;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.middleLauncher;
 import org.firstinspires.ftc.teamcode.legacy.subsystems.shootersLED;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -31,6 +33,7 @@ import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.extensions.pedro.PedroComponent;
+import dev.nextftc.hardware.impl.MotorEx;
 
 @Configurable
 @TeleOp(name = "Decode Teleop")
@@ -45,12 +48,13 @@ public class Decode_Teleop extends NextFTCOpMode {
                 new SubsystemComponent(frontLauncher.INSTANCE),
                 new SubsystemComponent(middleLauncher.INSTANCE),
                 new SubsystemComponent(backLauncher.INSTANCE),
+                new SubsystemComponent(limeLight.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
         );
     }
 
-    private String alliance = "R";
+    private String alliance = "B";
     private final Double turbo = 1.0;
     private final Double normal = 0.75;
     private final Double turtle = 0.3;
@@ -59,6 +63,11 @@ public class Decode_Teleop extends NextFTCOpMode {
     private String shootOrder = "quick";
     private boolean isShooting = false;
     private boolean isActive = false;
+    private MotorEx leftFront;
+    private MotorEx leftRear;
+    private MotorEx rightFront;
+    private MotorEx rightRear;
+
 
     static double frontWait = 0.00;
     static double middleWait = 0.55;
@@ -110,6 +119,11 @@ public class Decode_Teleop extends NextFTCOpMode {
 
         @Override
     public void onInit() {
+            leftFront = new MotorEx("leftFront");
+            leftRear = new MotorEx("leftRear");
+            rightFront = new MotorEx("rightFront");
+            rightRear = new MotorEx("rightRear");
+limeLight.INSTANCE.Off().schedule();
 
         speed = normal;
         if(alliance=="R"){
@@ -189,6 +203,10 @@ public class Decode_Teleop extends NextFTCOpMode {
             }
         }
 
+        leftFront.getMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftRear.getMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.getMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightRear.getMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
 
 
