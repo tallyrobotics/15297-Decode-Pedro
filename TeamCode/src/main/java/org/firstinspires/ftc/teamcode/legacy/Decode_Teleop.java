@@ -68,9 +68,9 @@ public class Decode_Teleop extends NextFTCOpMode {
     private MotorEx rightRear;
 
     private Pose shootPoseClose = new Pose(96.0, 95.6, Math.toRadians(-45.0));
-    private final Pose startPoseRed = new Pose(120.0, 72.0, Math.toRadians(-90.0));
+    private final Pose startPoseRed = new Pose(94.0, 110.0, Math.toRadians(-58.0));
     private Pose shootPoseFar = new Pose(76.0, 75.6, Math.toRadians(-45.0));
-    private final Pose startPoseBlue = new Pose(24.0, 72.0, Math.toRadians(-90.0));
+    private final Pose startPoseBlue = new Pose(50.0, 110.0, Math.toRadians(-122.0));
     private Pose currentPose = new Pose(72, 72, Math.toRadians(0.0));
     private final Double shootRPMClose = 1820.0;
     private final Double shootRPMFar = 2200.0;
