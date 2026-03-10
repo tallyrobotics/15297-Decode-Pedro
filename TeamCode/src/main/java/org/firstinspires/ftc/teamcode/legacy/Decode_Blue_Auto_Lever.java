@@ -66,7 +66,7 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
     private final Pose shootPose = new Pose(96.000, 95.600, Math.toRadians(-43.5)).mirror();
 
 
-    private final int shootRPM = 1750;
+    private int shootRPM = 1765;
 
 
     boolean USE_WEBCAM;
@@ -81,7 +81,7 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
         line1 = follower().pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(125.000, 124.300).mirror(),
+                                startPose,
                                 shootPose
                         )
                 )
@@ -105,7 +105,7 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
                         new BezierCurve(
                                 new Pose(122.000, 84.000).mirror(),
                                 new Pose(122.000, 76.000).mirror(),
-                                new Pose(127.000, 76.000).mirror()
+                                new Pose(128.000, 76.000).mirror()
                         )
                 )
                 .setConstantHeadingInterpolation(Math.toRadians(-180))
@@ -114,7 +114,7 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
         line4 = follower().pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(127.000, 76.000).mirror(),
+                                new Pose(128.000, 76.000).mirror(),
                                 shootPose
                         )
                 )
@@ -136,7 +136,7 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
         line6 = follower().pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(127.000, 60.000).mirror(),
+                                new Pose(128.000, 70.000).mirror(),
                                 shootPose
                         )
                 )
@@ -176,6 +176,17 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
                 .setLinearHeadingInterpolation(Math.toRadians(-136.5), Math.toRadians(-90))
                 .build();
 
+        line10 = follower().pathBuilder()
+                .addPath(
+                        new BezierCurve(
+                                new Pose(120.000, 60.000).mirror(),
+                                new Pose(95.000, 60.000).mirror(),
+                                new Pose(128.000, 70.000).mirror()
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(-180.0))
+                .build();
+
 
 
     }
@@ -191,11 +202,20 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
                 new Delay(0.4),
                 new ParallelGroup(
                         //ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()),
-                        new InstantCommand(()-> {isShooting=true;}),
+                        frontLauncher.INSTANCE.shootCycle(),
+                        new SequentialGroup(
+                                new Delay(0.25),
+                                middleLauncher.INSTANCE.shootCycle()
+                        ),
+                        new SequentialGroup(
+                                new Delay(0.5),
+                                backLauncher.INSTANCE.shootCycle()
+                        ),
+
 
                         new SequentialGroup(
-                                new Delay(1.5),
-                                new FollowPath(line2, true, 0.8)
+                                new Delay(0.9),
+                                new FollowPath(line2, true, 1.0)
 //                                new FollowPath(line2, true, 0.7)
                         )
                 )
@@ -209,12 +229,13 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
     public Command doAuto2() {
         return new SequentialGroup(
                 new Delay(0.25),
-                new FollowPath(line3, true, 0.8),
+                new FollowPath(line3, true, 0.7),
                 new Delay(1.0),
 //                new FollowPath(line3, true, 1.0),
                 new ParallelGroup(
                         new FollowPath(line4, true, 1.0),
                         new SequentialGroup(
+                                intakeLED.INSTANCE.PriorityOff(),
                                 new Delay(0.6),
                                 intakeLED.INSTANCE.PriorityOn()
                         )
@@ -228,16 +249,23 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
 //                                new InstantCommand(()-> {intakeLED.INSTANCE.backColor();}),
                         //
                         // ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()),
-                        new InstantCommand(()-> {isShooting=true;}),
+//                        new InstantCommand(()-> {isShooting=true;}),
 //                        ),
-
+                        frontLauncher.INSTANCE.shootCycle(),
+                        new SequentialGroup(
+                                new Delay(0.25),
+                                middleLauncher.INSTANCE.shootCycle()
+                        ),
+                        new SequentialGroup(
+                                new Delay(0.5),
+                                backLauncher.INSTANCE.shootCycle()
+                        ),
 
 
                         new SequentialGroup(
-                                new Delay(1.5),
-                                intakeLED.INSTANCE.PriorityOff(),
+                                new Delay(0.9),
                                 new FollowPath(line5, true, 1.0)
-//                                new FollowPath(line5, true, 0.7)
+//                                new FollowPath(line2, true, 0.7)
                         )
                 )
         );
@@ -248,10 +276,20 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
         return new SequentialGroup(
                 new Delay(0.25),
                 new ParallelGroup(
+                        new FollowPath(line10, true, 0.7),
+                        new InstantCommand(()->{shootRPM = 1775;}),
+                        flyLeftShooter.INSTANCE.flySetRPM(shootRPM),
+                        flyRightShooter.INSTANCE.flySetRPM(shootRPM)
+                ),
+                new Delay(0.25),
+                new ParallelGroup(
                         new FollowPath(line6, true, 1.0),
                         new SequentialGroup(
-                                new Delay(1.5),
-                                intakeLED.INSTANCE.PriorityOn()
+                                new SequentialGroup(
+                                        intakeLED.INSTANCE.PriorityOff(),
+                                        new Delay(0.6),
+                                        intakeLED.INSTANCE.PriorityOn()
+                                )
                         )
                 ),
 //                new FollowPath(line6, true, 1.0),
@@ -262,7 +300,7 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
 
                         new SequentialGroup(
                                 new Delay(1.5),
-                                intakeLED.INSTANCE.PriorityOff(),
+//                                intakeLED.INSTANCE.PriorityOff(),
                                 new FollowPath(line7, true, 1.0)
 //                                new FollowPath(line7, true, 0.7)
                         )
@@ -271,8 +309,11 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
                 new ParallelGroup(
                         new FollowPath(line8, true, 1.0),
                         new SequentialGroup(
-                                new Delay(1.5),
-                                intakeLED.INSTANCE.PriorityOn()
+                                new SequentialGroup(
+                                        intakeLED.INSTANCE.PriorityOff(),
+                                        new Delay(0.6),
+                                        intakeLED.INSTANCE.PriorityOn()
+                                )
                         )
                 ),
 //                new FollowPath(line8, true, 1.0),
@@ -291,7 +332,7 @@ public class Decode_Blue_Auto_Lever extends NextFTCOpMode {
 
                         new SequentialGroup(
                                 new Delay(1.5),
-                                intakeLED.INSTANCE.PriorityOff(),
+//                        intakeLED.INSTANCE.PriorityOff(),
                                 new FollowPath(line9, true, 1.0)
 //                        new FollowPath(line9, true, 1.0)
                         )
