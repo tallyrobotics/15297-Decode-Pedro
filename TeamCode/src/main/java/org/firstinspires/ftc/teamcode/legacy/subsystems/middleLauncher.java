@@ -7,6 +7,4 @@ public class middleLauncher extends launcher {
     public middleLauncher(String launchName, Boolean isReversed) {
         super(launchName, isReversed);
     }
-
-
 }
