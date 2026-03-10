@@ -16,21 +16,17 @@ public class intake implements Subsystem {
 
     public MotorEx intake;
     public String intakeName = "intake";
-    private int targetRPM;
 
     public Command on() {
-//        targetRPM = 750;
         return new SetPower(intake, 1.0);
     }
 
     public Command off() {
-//        targetRPM = 0;
         return new SetPower(intake, 0.0);
     }
     public Command out(){
         return new SetPower(intake, -0.3);
     }
-
 
     @Override
     public void initialize() {
@@ -40,6 +36,5 @@ public class intake implements Subsystem {
 
     @Override
     public void periodic() {
-
     }
 }

@@ -14,13 +14,8 @@ public abstract class launcher implements Subsystem {
 
 public launcher(String launchName, Boolean isReversed) {name = launchName; reverse = isReversed;}
 
-
-
     public static Double down = 0.0;
     public static Double up = 1.0;
-
-
-
     private boolean isUp = false;
 
     public ServoEx lift;
@@ -39,24 +34,17 @@ public launcher(String launchName, Boolean isReversed) {name = launchName; rever
     }
 
     public Command up(){
-
-
             return new SetPosition(lift, up);
-
-
     }
 
     public Command down(){
-
-
-
         return new SetPosition(lift, down);
     }
 
     public Command shootCycle() {
             return new SequentialGroup(
                     up(),
-                    new Delay(0.8),
+                    new Delay(0.5),
                     down()
             );
     }

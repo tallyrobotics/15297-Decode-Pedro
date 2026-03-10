@@ -17,16 +17,13 @@ import dev.nextftc.ftc.ActiveOpMode;
 public class limeLight implements Subsystem {
 
     public static final limeLight INSTANCE = new limeLight();
-    public limeLight() {
-
-    }
+    public limeLight() {}
 
     public Limelight3A limelight;
     String limename = "limelight";
     Integer balls = 0;
     Integer finalBalls = 0;
-
-
+    boolean enabled = true;
 
     @Override
     public void initialize()
@@ -46,14 +43,12 @@ public class limeLight implements Subsystem {
         limelight.pipelineSwitch(1);});
     }
 
-
     public Command Off(){
         return new InstantCommand(()-> {limelight.stop();});
     }
     public Integer GetBalls(){
         return finalBalls;
     }
-
 
     @Override
     public void periodic(){
@@ -71,7 +66,12 @@ public class limeLight implements Subsystem {
             }
         }
 
-        finalBalls = balls;
+        if(enabled){
+            finalBalls = balls;
+        }
+        else{
+            finalBalls = 0;
+        }
         ActiveOpMode.telemetry().addData("Balls", balls);
         balls = 0;
     }
