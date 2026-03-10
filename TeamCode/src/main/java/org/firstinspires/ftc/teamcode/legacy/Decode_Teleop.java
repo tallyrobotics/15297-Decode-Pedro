@@ -75,6 +75,7 @@ public class Decode_Teleop extends NextFTCOpMode {
     private final Double shootRPMClose = 1820.0;
     private final Double shootRPMFar = 2200.0;
     private Double setRPM;
+    private boolean isFollowing = false;
 
     private PathChain line1, line2;
     public void buildPaths() {
@@ -157,7 +158,6 @@ public class Decode_Teleop extends NextFTCOpMode {
         if(isShooting&&!isActive){
             shootPoseClose = follower().getPose();
             shootPoseFar = follower().getPose();
-            buildPaths();
             Shoot().schedule();
             isActive = true;
         }
@@ -166,6 +166,16 @@ public class Decode_Teleop extends NextFTCOpMode {
             if(!follower().isTeleopDrive()){
                 follower().startTeleopDrive();
             }
+        }
+        if(isFollowing){
+            buildPaths();
+            if(shootRPM>=2000){
+                new FollowPath(line2, true, 1.0).schedule();
+            }
+            else{
+                new FollowPath(line1, true, 1.0).schedule();
+            }
+            isFollowing = false;
         }
 
         leftFront.getMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -210,10 +220,7 @@ public class Decode_Teleop extends NextFTCOpMode {
                     }));
 
         Gamepads.gamepad1().a().whenTrue(
-                new FollowPath(line2, true, 1.0)
-        );
-        Gamepads.gamepad1().b().whenBecomesTrue(
-                new FollowPath(line1, true, 1.0)
+                new InstantCommand(()->{isFollowing = true;})
         );
 
         Gamepads.gamepad2().dpadDown().whenBecomesTrue(
