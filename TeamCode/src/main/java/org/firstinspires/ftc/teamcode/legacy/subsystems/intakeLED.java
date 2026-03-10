@@ -15,7 +15,6 @@ public class intakeLED extends SubsystemGroup {
                 middleLED.INSTANCE,
                 backLED.INSTANCE
         );
-
     }
 
     boolean priority = false;
@@ -26,6 +25,7 @@ public class intakeLED extends SubsystemGroup {
     public Command PriorityOff(){
         return new InstantCommand(()->{priority = false;});
     }
+
     @Override
     public void periodic() {
         super.periodic();
@@ -35,7 +35,6 @@ public class intakeLED extends SubsystemGroup {
                 (backLED.INSTANCE.DetectBall())))
                 || !ActiveOpMode.isStarted())
         {
-//            intake.INSTANCE.IntakeOff().schedule();
             intake.INSTANCE.off().schedule();
         }
 
@@ -53,5 +52,4 @@ public class intakeLED extends SubsystemGroup {
     public String backColor(){
         return backLED.INSTANCE.getColor();
     }
-
 }

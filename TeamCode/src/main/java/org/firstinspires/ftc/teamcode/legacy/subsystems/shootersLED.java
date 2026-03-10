@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.legacy.subsystems;
 
 import dev.nextftc.core.subsystems.SubsystemGroup;
-import dev.nextftc.ftc.ActiveOpMode;
 
 public class shootersLED extends SubsystemGroup {
     public static final shootersLED INSTANCE = new shootersLED();
@@ -40,7 +39,7 @@ public class shootersLED extends SubsystemGroup {
             rpmLED.INSTANCE.Red().schedule();
         }
         else{
-            rpmLED.INSTANCE.Off("RPM").schedule();
+            rpmLED.INSTANCE.Off().schedule();
         }
     }
 }

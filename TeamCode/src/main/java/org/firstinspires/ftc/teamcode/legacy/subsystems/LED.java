@@ -64,8 +64,7 @@ public abstract class LED implements Subsystem {
         return hasBall;
     }
 
-
-    public Command Off(String lor) {
+    public Command Off() {
             return new SetPosition(led, off);
     }
 
@@ -84,11 +83,11 @@ public abstract class LED implements Subsystem {
         return new SetPosition(led, blue);
     }
 
-    public Command Green(String lor) {
+    public Command Green() {
         return new SetPosition(led, green);
     }
 
-    public Command Purple(String lor) {
+    public Command Purple() {
         return new SetPosition(led, purple);
     }
 
@@ -98,14 +97,10 @@ public abstract class LED implements Subsystem {
         led = new ServoEx(LEDname);
         if(!isRPM){
             colSensor2 = ActiveOpMode.hardwareMap().get(ColorSensor.class, colSenName2);
-
             colorDistanceSensor2 = ActiveOpMode.hardwareMap().get(DistanceSensor.class, distanceName2);
-
             colSensor3 = ActiveOpMode.hardwareMap().get(ColorSensor.class, colSenName3);
-
             colorDistanceSensor3 = ActiveOpMode.hardwareMap().get(DistanceSensor.class, distanceName3);
         }
-
     }
 
     @Override
@@ -116,32 +111,27 @@ public abstract class LED implements Subsystem {
             myNormalizedColors = ((NormalizedColorSensor) colSensor3).getNormalizedColors();
             distance2 = Double.parseDouble(JavaUtil.formatNumber(colorDistanceSensor2.getDistance(DistanceUnit.CM), 1));
             distance3 = Double.parseDouble(JavaUtil.formatNumber(colorDistanceSensor3.getDistance(DistanceUnit.CM), 1));
-            // If this color sensor also has a distance sensor, display the measured distance.
-            // Note that the reported distance is only useful at very close
-            // range, and is impacted by ambient light and surface reflectivity.
-            ActiveOpMode.telemetry().addData(colSenName2 + " distance (cm)", distance2);
-            ActiveOpMode.telemetry().addData(colSenName3 + " distance (cm)", distance3);
+
             if ((!Double.isNaN(distance2)&&distance2<maxDist2)||distance3<maxDist3) {
                 hasBall = true;
                 if (myNormalizedColors.green >= myNormalizedColors.red && myNormalizedColors.green >= myNormalizedColors.blue) {
                     color = "green";
-                    Green("R").schedule();
+                    Green().schedule();
                 } else if (myNormalizedColors.blue >= myNormalizedColors.red && myNormalizedColors.blue >= myNormalizedColors.green) {
                     color = "purple";
-                    Purple("R").schedule();
+                    Purple().schedule();
                 } else {
                     color = "off";
-                    Off("R").schedule();
+                    Off().schedule();
                 }
             } else {
                 hasBall = false;
                 color = "off";
-                Off("R").schedule();
+                Off().schedule();
             }
+            ActiveOpMode.telemetry().addData(colSenName2 + " distance (cm)", distance2);
+            ActiveOpMode.telemetry().addData(colSenName3 + " distance (cm)", distance3);
             ActiveOpMode.telemetry().addData(colSenName3 + "color", color);
         }
-
     }
-
 }
-
