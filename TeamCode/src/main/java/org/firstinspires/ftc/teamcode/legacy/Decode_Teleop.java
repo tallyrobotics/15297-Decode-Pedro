@@ -31,7 +31,6 @@ import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.ftc.Gamepads;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
-import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.hardware.impl.MotorEx;
 
@@ -68,37 +67,24 @@ public class Decode_Teleop extends NextFTCOpMode {
     private MotorEx rightFront;
     private MotorEx rightRear;
 
-
-    static double frontWait = 0.00;
-    static double middleWait = 0.55;
-    static double backWait = 1.1;
-
-    private boolean inPath = false;
-    private boolean startTele = false;
-
-    private final Pose shootPoseRed = new Pose(96.1, 95.7, Math.toRadians(-45.0));
-    private final Pose targetPoseRed = new Pose(96.0, 95.6, Math.toRadians(-45.0));
+    private Pose shootPose = new Pose(96.0, 95.6, Math.toRadians(-45.0));
     private final Pose startPoseRed = new Pose(120.0, 72.0, Math.toRadians(-90.0));
-    private final Pose shootPoseBlue = new Pose(47.6, 96.4, Math.toRadians(-135.0));
-    private final Pose targetPoseBlue = new Pose(47.7, 96.3, Math.toRadians(-135.0));
+    private Pose shootPoseBlue = new Pose(144-96.0, 95.6, Math.toRadians(-135.0));
     private final Pose startPoseBlue = new Pose(24.0, 72.0, Math.toRadians(-90.0));
+    private Pose currentPose = new Pose(72, 72, Math.toRadians(0.0));
     private final Double shootRPMRed = 1820.0;
     private final Double shootRPMBlue = 1820.0;
     private Double setRPM;
-    
-
-    public MecanumDriverControlled driverControlled;
 
     private PathChain line1;
     public void buildPaths() {
-
         if(alliance=="R"){
             line1 = follower().pathBuilder().addPath(
                             new BezierLine(
-                                    targetPoseRed,
-                                    shootPoseRed
+                                    currentPose,
+                                    shootPose
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(-45.0))
+                    ).setConstantHeadingInterpolation(shootPose.getHeading())
 
                     .build();
         }
@@ -106,14 +92,12 @@ public class Decode_Teleop extends NextFTCOpMode {
         {
             line1 = follower().pathBuilder().addPath(
                             new BezierLine(
-                                    targetPoseBlue,
+                                    currentPose,
                                     shootPoseBlue
                             )
-                    ).setConstantHeadingInterpolation(Math.toRadians(-135.0))
-
+                    ).setConstantHeadingInterpolation(shootPoseBlue.getHeading())
                     .build();
         }
-
     }
 
 
@@ -133,31 +117,7 @@ limeLight.INSTANCE.Off().schedule();
             setRPM = shootRPMBlue;
         }
         shootRPM = setRPM;
-
-
-//        colorFront = hardwareMap.get(ColorSensor.class, "colorFront");
-//        colorMid = hardwareMap.get(ColorSensor.class, "colorMid");
-//        colorBack = hardwareMap.get(ColorSensor.class, "colorBack");
-//        ledMidRed = hardwareMap.get(LED.class, "ledMidRed");
-//        ledMidGreen = hardwareMap.get(LED.class, "ledMidGreen");
-//        ledBackRed = hardwareMap.get(LED.class, "ledBackRed");
-//        ledBackGreen = hardwareMap.get(LED.class, "ledBackGreen");
-//        ledFrontRed = hardwareMap.get(LED.class, "ledFrontRed");
-//        ledFrontGreen = hardwareMap.get(LED.class, "ledFrontGreen");
-//        colorFront_DistanceSensor = hardwareMap.get(DistanceSensor.class, "colorFront");
-//        colorMid_DistanceSensor = hardwareMap.get(DistanceSensor.class, "colorMid");
-//        colorBack_DistanceSensor = hardwareMap.get(DistanceSensor.class, "colorBack");
-//        gain = 10;
-//        flyLeft = hardwareMap.get(DcMotorEx.class,"flyLeft");
-////        flyLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-//        flyLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        flyLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            follower().deactivateAllPIDFs();
-            follower().activateDrive();
-            follower().activateCentripetal();
-            follower().activateHeading();
-            follower().activateTranslational();
+        follower().activateAllPIDFs();
             if(alliance=="R"){
                 follower().setStartingPose(startPoseRed);
             }
@@ -175,29 +135,23 @@ limeLight.INSTANCE.Off().schedule();
         follower().setTeleOpDrive(
                 -gamepad1.left_stick_y*speed,
                 -gamepad1.left_stick_x*speed,
-                -gamepad1.right_stick_x*speed*0.55,
+                -gamepad1.right_stick_x*speed*0.6,
                 true);
 
         telemetry.addData("flyLeft RPM",flyLeftShooter.INSTANCE.flyMotor.getVelocity());
-//        telemetry.addData("flyLeft Target RPM", flyLeftShooter.INSTANCE.controlSystem.getGoal().getVelocity());
-        telemetry.addData("flyRight RPM",flyRightShooter.INSTANCE.flyMotor.getVelocity());
-//        telemetry.addData("flyRight Target RPM", flyRightShooter.INSTANCE.controlSystem.getGoal().getVelocity());
-        telemetry.addData("shootRPM", shootRPM);
 
-        telemetry.addLine("Hold the A button on gamepad 1 to increase gain, or B to decrease it.");
-        telemetry.addLine(" ");
-        telemetry.addLine("Higher gain values mean that the sensor will report larger numbers for Red, Green, and Blue, and Value.");
-        telemetry.addLine(" ");
+        telemetry.addData("flyRight RPM",flyRightShooter.INSTANCE.flyMotor.getVelocity());
+
+        telemetry.addData("shootRPM", shootRPM);
         if(isShooting&&!isActive){
+            shootPose = follower().getPose();
+            shootPoseBlue = follower().getPose();
+            buildPaths();
             Shoot().schedule();
             isActive = true;
         }
-//        if((Math.abs(Gamepads.gamepad1().leftStickX().get())>0.5||Math.abs(Gamepads.gamepad1().leftStickY().get())>0.5||Math.abs(Gamepads.gamepad1().rightStickX().get())>0.5)&&follower().isBusy()){
-//
-//
-//
-//        }
-        if((Math.abs(gamepad1.left_stick_x)>0.2||Math.abs(gamepad1.left_stick_y)>0.2||Math.abs(gamepad1.right_stick_x)>0.2||isShooting||follower().atPose(shootPoseRed,0.15,0.15,0.04))){
+        currentPose = follower().getPose();
+        if((Math.abs(gamepad1.left_stick_x)>0.2||Math.abs(gamepad1.left_stick_y)>0.2||Math.abs(gamepad1.right_stick_x)>0.2||isShooting||follower().atPose(shootPose,0.15,0.15,0.04))){
             if(!follower().isTeleopDrive()){
                 follower().startTeleopDrive();
             }
@@ -216,10 +170,6 @@ limeLight.INSTANCE.Off().schedule();
 
     @Override
     public void onStartButtonPressed() {
-
-
-//        flyLeft.setVelocity(200);
-
         follower().startTeleopDrive();
 
         intake.INSTANCE.on().schedule();
@@ -250,19 +200,6 @@ limeLight.INSTANCE.Off().schedule();
                     new InstantCommand(()-> {
                         isShooting = true;
                     }));
-//                new ParallelGroup(
-//                        frontLauncher.INSTANCE.shootCycle(),
-//                        new SequentialGroup(
-//                                new Delay(0.2),
-//                                middleLauncher.INSTANCE.shootCycle()
-//                        ),
-//                        new SequentialGroup(
-//                                new Delay(0.4),
-//                                backLauncher.INSTANCE.shootCycle(),
-//                                new Delay(0.3)
-//                        )
-//                )
-//                );
 
         Gamepads.gamepad1().a().whenTrue(
                 new FollowPath(line1, true, 1.0)
@@ -284,15 +221,15 @@ limeLight.INSTANCE.Off().schedule();
             }
         ));
         Gamepads.gamepad2().y().whenBecomesTrue(new InstantCommand(()-> {shootOrder = "quick";}));
-        Gamepads.gamepad2().x().whenBecomesTrue(new InstantCommand(()-> {shootOrder = "BFM";}));
+        Gamepads.gamepad2().b().whenBecomesTrue(new InstantCommand(()-> {shootOrder = "BFM";}));
         Gamepads.gamepad2().a().whenBecomesTrue(new InstantCommand(()-> {shootOrder = "MBF";}));
-        Gamepads.gamepad2().b().whenBecomesTrue(new InstantCommand(()-> {shootOrder = "FMB";}));
+        Gamepads.gamepad2().x().whenBecomesTrue(new InstantCommand(()-> {shootOrder = "FMB";}));
 
-        Gamepads.gamepad2().rightBumper().whenBecomesTrue(
-                intakeLED.INSTANCE.PriorityOn()
+        Gamepads.gamepad2().leftBumper().whenBecomesTrue(
+                intakeLED.INSTANCE.PriorityOff()
         );
         Gamepads.gamepad2().leftBumper().whenBecomesFalse(
-                intakeLED.INSTANCE.PriorityOff()
+                intakeLED.INSTANCE.PriorityOn()
         );
 
 
@@ -308,13 +245,13 @@ limeLight.INSTANCE.Off().schedule();
             return new ParallelGroup(
                     frontLauncher.INSTANCE.shootCycle(),
                     new SequentialGroup(
-                            new Delay(0.5),
+                            new Delay(0.2),
                             middleLauncher.INSTANCE.shootCycle()
                     ),
                     new SequentialGroup(
-                            new Delay(1.0),
+                            new Delay(0.4),
                             backLauncher.INSTANCE.shootCycle(),
-                            new Delay(0.3),
+                            new Delay(0.05),
                             new InstantCommand(()->{isActive = false;
                                 isShooting = false;})
                     )
@@ -323,13 +260,13 @@ limeLight.INSTANCE.Off().schedule();
             return new ParallelGroup(
                     middleLauncher.INSTANCE.shootCycle(),
                     new SequentialGroup(
-                            new Delay(0.5),
+                            new Delay(0.2),
                             backLauncher.INSTANCE.shootCycle()
                     ),
                     new SequentialGroup(
-                            new Delay(1.0),
+                            new Delay(0.4),
                             frontLauncher.INSTANCE.shootCycle(),
-                            new Delay(0.3),
+                            new Delay(0.05),
                             new InstantCommand(()->{isActive = false;
                             isShooting = false;})
                     )
@@ -338,13 +275,13 @@ limeLight.INSTANCE.Off().schedule();
             return new ParallelGroup(
                     backLauncher.INSTANCE.shootCycle(),
                     new SequentialGroup(
-                            new Delay(0.5),
+                            new Delay(0.2),
                             frontLauncher.INSTANCE.shootCycle()
                     ),
                     new SequentialGroup(
-                            new Delay(1.0),
+                            new Delay(0.4),
                             middleLauncher.INSTANCE.shootCycle(),
-                            new Delay(0.3),
+                            new Delay(0.05),
                             new InstantCommand(()->{isActive = false;
                                 isShooting = false;})
                     )
@@ -366,8 +303,6 @@ limeLight.INSTANCE.Off().schedule();
             );
         }
     }
-
-
 
     @Override
     public void onStop() {
