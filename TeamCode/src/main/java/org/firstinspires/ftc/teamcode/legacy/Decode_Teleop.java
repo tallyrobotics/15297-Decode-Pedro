@@ -6,6 +6,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -56,12 +57,11 @@ public class Decode_Teleop extends NextFTCOpMode {
     private String alliance = "B";
     private final Double turbo = 1.0;
     private final Double normal = 0.75;
-    private final Double turtle = 0.3;
+    private final Double turtle = 0.35;
     private Double speed;
     private double shootRPM = 0.0;
-    private String shootOrder = "FMB";
+    private String shootOrder = "quick";
     private boolean isShooting = false;
-    private boolean isActive = false;
     private MotorEx leftFront;
     private MotorEx leftRear;
     private MotorEx rightFront;
@@ -69,53 +69,24 @@ public class Decode_Teleop extends NextFTCOpMode {
 
     private Pose shootPoseClose = new Pose(96.0, 95.6, Math.toRadians(-45.0));
     private final Pose startPoseRed = new Pose(94.0, 110.0, Math.toRadians(-58.0));
-    private Pose shootPoseFar = new Pose(76.0, 75.6, Math.toRadians(-45.0));
     private final Pose startPoseBlue = new Pose(50.0, 110.0, Math.toRadians(-122.0));
-    private Pose currentPose = new Pose(72, 72, Math.toRadians(0.0));
-    private final Double shootRPMClose = 1820.0;
-    private final Double shootRPMFar = 2200.0;
+    private final Double shootRPMClose = 1900.0;
+    private final Double shootRPMFar = 2250.0;
     private Double setRPM;
+    private boolean bPressed = false;
     private boolean isFollowing = false;
+    private boolean correctShootPose = true;
 
     private PathChain line1, line2;
     public void buildPaths() {
-        if(alliance=="R"){
-            line1 = follower().pathBuilder().addPath(
-                            new BezierLine(
-                                    currentPose,
-                                    shootPoseClose
-                            )
-                    ).setConstantHeadingInterpolation(shootPoseClose.getHeading())
-
-                    .build();
-            line2 = follower().pathBuilder().addPath(
-                            new BezierLine(
-                                    currentPose,
-                                    shootPoseFar
-                            )
-                    ).setConstantHeadingInterpolation(shootPoseFar.getHeading())
-
-                    .build();
-        }
-        else if(alliance=="B")
-        {
-            line1 = follower().pathBuilder().addPath(
-                            new BezierLine(
-                                    currentPose,
-                                    shootPoseClose.mirror()
-                            )
-                    ).setConstantHeadingInterpolation(shootPoseClose.mirror().getHeading())
-                    .build();
-            line2 = follower().pathBuilder().addPath(
-                            new BezierLine(
-                                    currentPose,
-                                    shootPoseFar.mirror()
-                            )
-                    ).setConstantHeadingInterpolation(shootPoseFar.mirror().getHeading())
-                    .build();
-        }
+        line1 = follower().pathBuilder().addPath(
+                        new BezierLine(
+                                shootPoseClose,
+        new Pose(shootPoseClose.getX()-0.1, shootPoseClose.getY()-0.1)
+                        )
+                ).setConstantHeadingInterpolation(shootPoseClose.getHeading())
+                .build();
     }
-
 
         @Override
     public void onInit() {
@@ -125,6 +96,8 @@ public class Decode_Teleop extends NextFTCOpMode {
             rightRear = new MotorEx("rightRear");
             limeLight.INSTANCE.Off().schedule();
             setRPM = shootRPMClose;
+
+//            follower().setConstraints(new PathConstraints(0.99, 100, 1.0, 1.0));
 
         speed = normal;
         shootRPM = setRPM;
@@ -142,42 +115,34 @@ public class Decode_Teleop extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-        follower().update();
         follower().setTeleOpDrive(
                 -gamepad1.left_stick_y*speed,
                 -gamepad1.left_stick_x*speed,
                 -gamepad1.right_stick_x*speed*0.6,
                 true);
 
-//        telemetry.addData("flyLeft RPM",flyLeftShooter.INSTANCE.flyMotor.getVelocity());
-//
-//        telemetry.addData("flyRight RPM",flyRightShooter.INSTANCE.flyMotor.getVelocity());
-
-        telemetry.addData("shootRPM", shootRPM);
-        telemetry.addData("Shoot Order", shootOrder);
-        if(isShooting&&!isActive){
-            shootPoseClose = follower().getPose();
-            shootPoseFar = follower().getPose();
+        if(isShooting){
             Shoot().schedule();
-            isActive = true;
+            if(correctShootPose){
+                shootPoseClose = follower().getPose();
+                buildPaths();
+            }
+            correctShootPose = true;
         }
-        currentPose = follower().getPose();
-        if((Math.abs(gamepad1.left_stick_x)>0.25||Math.abs(gamepad1.left_stick_y)>0.25||Math.abs(gamepad1.right_stick_x)>0.25||isShooting||follower().atPose(shootPoseClose,0.15,0.15,0.04))){
+        if(isShooting||bPressed){
             if(!follower().isTeleopDrive()){
                 follower().startTeleopDrive();
             }
+            isFollowing = false;
         }
         if(isFollowing){
             buildPaths();
-            if(shootRPM>=2000){
-                new FollowPath(line2, true, 1.0).schedule();
-            }
-            else{
-                new FollowPath(line1, true, 1.0).schedule();
-            }
-            isFollowing = false;
+            new SequentialGroup(
+                    new FollowPath(line1, true, 1.0)
+            ).schedule();
         }
-
+        telemetry.addData("shootRPM", shootRPM);
+        telemetry.addData("Shoot Order", shootOrder);
         leftFront.getMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftRear.getMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.getMotor().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -191,13 +156,13 @@ public class Decode_Teleop extends NextFTCOpMode {
     public void onStartButtonPressed() {
         follower().startTeleopDrive();
 
-        intake.INSTANCE.on().schedule();
-        intakeLED.INSTANCE.PriorityOn();
+        intakeLED.INSTANCE.PriorityOn().schedule();
         Gamepads.gamepad1().leftBumper().whenTrue(new InstantCommand(() -> {speed=turtle;}));
 
         Gamepads.gamepad1().leftBumper().whenBecomesFalse(new InstantCommand(() -> {speed=normal;}));
         Gamepads.gamepad1().rightBumper().whenTrue(new InstantCommand(() -> {speed=turbo;}));
         Gamepads.gamepad1().rightBumper().whenBecomesFalse(new InstantCommand(() -> {speed=normal;}));
+        Gamepads.gamepad1().x().whenFalse(new InstantCommand(()->{follower().update();}));
 
         Gamepads.gamepad1().dpadUp().whenBecomesTrue(
                 new InstantCommand(() -> {
@@ -220,7 +185,19 @@ public class Decode_Teleop extends NextFTCOpMode {
                     }));
 
         Gamepads.gamepad1().a().whenTrue(
-                new InstantCommand(()->{isFollowing = true;})
+                new InstantCommand(()->{
+                    correctShootPose = false;
+                    isFollowing = true;
+                })
+        );
+
+        Gamepads.gamepad1().b().whenTrue(
+                new InstantCommand(()->{bPressed = true;})
+        );
+
+        Gamepads.gamepad1().b().whenFalse(
+                new InstantCommand(()->{bPressed = false;
+                    follower().update();})
         );
 
         Gamepads.gamepad2().dpadDown().whenBecomesTrue(
@@ -238,6 +215,7 @@ public class Decode_Teleop extends NextFTCOpMode {
                 flyRightShooter.INSTANCE.flySetRPM(shootRPM);
             }
         ));
+
         Gamepads.gamepad2().y().whenBecomesTrue(new InstantCommand(()-> {shootOrder = "quick";}));
         Gamepads.gamepad2().b().whenBecomesTrue(new InstantCommand(()-> {shootOrder = "BFM";}));
         Gamepads.gamepad2().a().whenBecomesTrue(new InstantCommand(()-> {shootOrder = "MBF";}));
@@ -249,10 +227,9 @@ public class Decode_Teleop extends NextFTCOpMode {
         Gamepads.gamepad2().leftBumper().whenBecomesFalse(
                 intakeLED.INSTANCE.PriorityOn()
         );
-
+        Gamepads.gamepad1().rightStickButton().whenFalse(new InstantCommand(()->{follower().update();}));
         flyRightShooter.INSTANCE.flySetRPM(shootRPM).schedule();
         flyLeftShooter.INSTANCE.flySetRPM(shootRPM).schedule();
-        intake.INSTANCE.on().schedule();
     }
 
     public Command Shoot(){
@@ -267,7 +244,7 @@ public class Decode_Teleop extends NextFTCOpMode {
                             new Delay(0.4),
                             backLauncher.INSTANCE.shootCycle(),
                             new Delay(0.05),
-                            new InstantCommand(()->{isActive = false;
+                            new InstantCommand(()->{
                                 isShooting = false;})
                     )
             );
@@ -282,7 +259,7 @@ public class Decode_Teleop extends NextFTCOpMode {
                             new Delay(0.4),
                             frontLauncher.INSTANCE.shootCycle(),
                             new Delay(0.05),
-                            new InstantCommand(()->{isActive = false;
+                            new InstantCommand(()->{
                             isShooting = false;})
                     )
             );
@@ -297,7 +274,7 @@ public class Decode_Teleop extends NextFTCOpMode {
                             new Delay(0.4),
                             middleLauncher.INSTANCE.shootCycle(),
                             new Delay(0.05),
-                            new InstantCommand(()->{isActive = false;
+                            new InstantCommand(()->{
                                 isShooting = false;})
                     )
             );
@@ -312,7 +289,7 @@ public class Decode_Teleop extends NextFTCOpMode {
                             new Delay(0.4),
                             backLauncher.INSTANCE.shootCycle(),
                             new Delay(0.05),
-                            new InstantCommand(()->{isActive = false;
+                            new InstantCommand(()->{
                                 isShooting = false;})
                     )
             );

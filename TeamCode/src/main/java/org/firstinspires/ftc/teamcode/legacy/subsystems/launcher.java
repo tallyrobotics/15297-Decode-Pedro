@@ -44,7 +44,7 @@ public launcher(String launchName, Boolean isReversed) {name = launchName; rever
     public Command shootCycle() {
             return new SequentialGroup(
                     up(),
-                    new Delay(0.5),
+                    new Delay(0.45),
                     down()
             );
     }

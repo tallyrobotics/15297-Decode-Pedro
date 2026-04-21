@@ -6,6 +6,7 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
+import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.JavaUtil;
@@ -38,7 +39,6 @@ import dev.nextftc.extensions.pedro.FollowPath;
 import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 
-
 @Autonomous(name = "Decode Red Auto Lever")
 public class Decode_Red_Auto_Lever extends NextFTCOpMode {
     public Decode_Red_Auto_Lever(){
@@ -58,100 +58,105 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
     int counter=0;
     Boolean isShooting = false;
 
+    private final Pose startPose = new Pose(122, 121.3, Math.toRadians(-50.0));
+    private final Pose mainShootPose = new Pose(92.000, 85.000, Math.toRadians(-37.0));
 
-
-//    private Follower follower;
-
-    private final Pose startPose = new Pose(125, 124.3, Math.toRadians(-50.0));
-    private final Pose mainShootPose = new Pose(94.000, 82.000, Math.toRadians(-40.0));
-    private Pose pickupPose = new Pose(0.000, 0.000, Math.toRadians(0.000));
-
-
-    private int shootRPM = 1900;
-
+    private int shootRPM = 1975;
 
     boolean USE_WEBCAM;
     AprilTagProcessor myAprilTagProcessor;
     VisionPortal myVisionPortal;
 
 
-    private PathChain line1, line2, line3, line4, line5, line6, line7;
+    private PathChain line1, line2, line3, line4, line5, line6, line7, line8;
 
     public void buildPaths() {
 
         line1 = follower().pathBuilder()
                 .addPath(
                         new BezierLine(
-                                startPose,
+                                new Pose(122.000, 121.300),
                                 mainShootPose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(-50), Math.toRadians(-40))
+                .setLinearHeadingInterpolation(Math.toRadians(-50), Math.toRadians(-37))
                 .build();
 
         line2 = follower().pathBuilder()
                 .addPath(
                         new BezierCurve(
                                 mainShootPose,
-                                new Pose(95.760, 62.830),
-                                new Pose(120.000, 63.000)
+                                new Pose(94.000, 62.000),
+                                new Pose(100.000, 58.500),
+                                new Pose(117.000, 58.500)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(-40))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         line3 = follower().pathBuilder()
                 .addPath(
-                        new BezierLine(
-                                new Pose(120.000, 63.000),
+                        new BezierCurve(
+                                new Pose(120.000, 61.500),
+                                new Pose(100, 65),
                                 mainShootPose
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(-40))
+                .setConstantHeadingInterpolation(Math.toRadians(-37))
                 .build();
 
         line4 = follower().pathBuilder()
                 .addPath(
                         new BezierCurve(
                                 mainShootPose,
-                                new Pose(105.000, 65.000),
-                                new Pose(129.000, 60.000)
+                                new Pose(100.000, 65.000),
+                                new Pose(128.000, 61.000)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(35))
                 .build();
 
         line5 = follower().pathBuilder()
                 .addPath(
                         new BezierCurve(
-                                pickupPose,
+                                new Pose(128.000, 61.000),
                                 new Pose(105.000, 65.000),
                                 mainShootPose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(Math.toRadians(pickupPose.getHeading())), Math.toRadians(-40))
+                .setLinearHeadingInterpolation(Math.toRadians(35), Math.toRadians(-37))
                 .build();
 
         line6 = follower().pathBuilder()
                 .addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 mainShootPose,
-                                new Pose(101.545, 83.823),
-                                new Pose(120.000, 84.000)
+                                new Pose(120.000, 82.500)
                         )
                 )
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setConstantHeadingInterpolation(Math.toRadians(-3.73))
                 .build();
 
         line7 = follower().pathBuilder()
                 .addPath(
                         new BezierLine(
-                                new Pose(120.000, 84.000),
-                                new Pose(94.000, 110.000)
+                                new Pose(120.000, 82.500),
+                                mainShootPose
                         )
                 )
-                .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(-58))
+                .setLinearHeadingInterpolation(Math.toRadians(-3.73), Math.toRadians(-37))
                 .build();
+        line8 = follower().pathBuilder()
+                .addPath(
+                        new BezierLine(
+                                mainShootPose,
+                                new Pose(100.000, 81.000)
+                        )
+                )
+                .setConstantHeadingInterpolation(Math.toRadians(-37))
+                .build();
+
+
     }
 
     public Command doAuto1() {
@@ -159,110 +164,125 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                 new ParallelGroup(
                         flyLeftShooter.INSTANCE.flySetRPM(shootRPM),
                         flyRightShooter.INSTANCE.flySetRPM(shootRPM),
-                        new FollowPath(line1, true, 0.75)
+                        new FollowPath(line1, true, 1.0)
                 ),
-                new Delay(0.4),
                 new ParallelGroup(
-                        middleLauncher.INSTANCE.shootCycle(),
+                        frontLauncher.INSTANCE.shootCycle(),
                         new SequentialGroup(
-                                new Delay(0.25),
-                                frontLauncher.INSTANCE.shootCycle()
+                                new Delay(0.2),
+                                middleLauncher.INSTANCE.shootCycle()
                         ),
                         new SequentialGroup(
-                                new Delay(0.5),
+                                new Delay(0.4),
                                 backLauncher.INSTANCE.shootCycle()
                         ),
 
                         new SequentialGroup(
                                 new Delay(0.7),
                                 new FollowPath(line2, true, 1.0),
-                                new FollowPath(line3, true, 1.0)
+                                new ParallelGroup(
+                                        new FollowPath(line3, true, 1.0),
+                                        new SequentialGroup(
+                                                intakeLED.INSTANCE.PriorityOn(),
+                                                new Delay(0.25),
+                                                intakeLED.INSTANCE.PriorityOff()
+                                        )
+                                )
                         )
                 ),
-                new Delay(0.4),
+                new Delay(0.1),
                 new ParallelGroup(
-                        middleLauncher.INSTANCE.shootCycle(),
+                        frontLauncher.INSTANCE.shootCycle(),
                         new SequentialGroup(
-                                new Delay(0.25),
-                                frontLauncher.INSTANCE.shootCycle()
+                                new Delay(0.2),
+                                middleLauncher.INSTANCE.shootCycle()
                         ),
                         new SequentialGroup(
-                                new Delay(0.5),
+                                new Delay(0.4),
+                                backLauncher.INSTANCE.shootCycle()
+                        ),
+
+                        new SequentialGroup(
+                                new Delay(0.7),
+                                new FollowPath(line4, true, 1.0),
+                                new Delay(0.75),
+                                new ParallelGroup(
+                                        new FollowPath(line5, true, 1.0),
+                                        new SequentialGroup(
+                                                intakeLED.INSTANCE.PriorityOn(),
+                                                new Delay(0.5),
+                                                intakeLED.INSTANCE.PriorityOff()
+                                        )
+                                )
+                        )
+                ),
+                new Delay(0.1),
+                new ParallelGroup(
+                        frontLauncher.INSTANCE.shootCycle(),
+                        new SequentialGroup(
+                                new Delay(0.2),
+                                middleLauncher.INSTANCE.shootCycle()
+                        ),
+                        new SequentialGroup(
+                                new Delay(0.4),
                                 backLauncher.INSTANCE.shootCycle()
                         ),
 
 
                         new SequentialGroup(
                                 new Delay(0.7),
-                                new FollowPath(line4, false, 1.0),
-                                new Delay(1.0),
-                                new FollowPath(line5, true, 1.0)
+                                new FollowPath(line4, true, 1.0),
+                                new Delay(0.75),
+                                new ParallelGroup(
+                                        new FollowPath(line5, true, 1.0),
+                                        new SequentialGroup(
+                                                intakeLED.INSTANCE.PriorityOn(),
+                                                new Delay(0.5),
+                                                intakeLED.INSTANCE.PriorityOff()
+                                        )
+                                )
                         )
                 ),
-                new Delay(0.4),
+                new Delay(0.1),
                 new ParallelGroup(
-                        middleLauncher.INSTANCE.shootCycle(),
+                        frontLauncher.INSTANCE.shootCycle(),
                         new SequentialGroup(
-                                new Delay(0.25),
-                                frontLauncher.INSTANCE.shootCycle()
+                                new Delay(0.2),
+                                middleLauncher.INSTANCE.shootCycle()
                         ),
                         new SequentialGroup(
-                                new Delay(0.5),
+                                new Delay(0.4),
                                 backLauncher.INSTANCE.shootCycle()
                         ),
 
-
                         new SequentialGroup(
                                 new Delay(0.7),
-                                new FollowPath(line4, false, 1.0),
-                                new Delay(0.8),
-                                new InstantCommand(()->{
-                                    pickupPose = follower().getPose();
-                                    buildPaths();
-                                        }),
-                                new Delay(0.1),
-
-                                new FollowPath(line5, true, 1.0)
+                                new FollowPath(line4, true, 1.0),
+                                new Delay(0.75),
+                                new ParallelGroup(
+                                        new FollowPath(line5, true, 1.0),
+                                        new SequentialGroup(
+                                                intakeLED.INSTANCE.PriorityOn(),
+                                                new Delay(0.5),
+                                                intakeLED.INSTANCE.PriorityOff()
+                                        )
+                                )
                         )
                 ),
-                new Delay(0.4),
-                new ParallelGroup(
-                        middleLauncher.INSTANCE.shootCycle(),
-                        new SequentialGroup(
-                                new Delay(0.25),
-                                frontLauncher.INSTANCE.shootCycle()
-                        ),
-                        new SequentialGroup(
-                                new Delay(0.5),
-                                backLauncher.INSTANCE.shootCycle()
-                        ),
-
-
-                        new SequentialGroup(
-                                new Delay(0.7),
-                                new FollowPath(line4, false, 1.0),
-                                new Delay(1.0),
-                                new FollowPath(line5, true, 1.0)
-                        )
-                ),
-                new Delay(0.4),
+                new Delay(0.1),
                 new ParallelGroup(
                         new InstantCommand(()->{isShooting = true;}),
-
+                        new InstantCommand(()->{follower().setConstraints(new PathConstraints(0.975, 100, 0.85, 0.8));}),
 
                         new SequentialGroup(
-                                new Delay(0.7),
-                                new ParallelGroup(
-                                        new FollowPath(line6, true, 1.0),
-                                        new InstantCommand(()->{shootRPM = 1700;}),
-                                        flyLeftShooter.INSTANCE.flySetRPM(shootRPM),
-                                        flyRightShooter.INSTANCE.flySetRPM(shootRPM)
-                                ),
-                                new FollowPath(line7, true, 1.0)
+                                new Delay(1.0),
+                                new FollowPath(line6, true, 1.0)
                         )
                 ),
-                new Delay(0.4),
-                new InstantCommand(()->{isShooting = true;})
+                new FollowPath(line7, true, 1.0),
+                new InstantCommand(()->{isShooting = true;}),
+                new Delay(0.9),
+                new FollowPath(line8, true, 1.0)
         );
     }
 
@@ -277,17 +297,16 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
             ShootPattern(intakeLED.INSTANCE.frontColor(), intakeLED.INSTANCE.middleColor(),intakeLED.INSTANCE.backColor()).schedule();
 
         }
-
-
+        follower().update();
         // Feedback to Driver Hub for debugging
 
         telemetry.addData("x", follower().getPose().getX());
         telemetry.addData("y", follower().getPose().getY());
         telemetry.addData("heading", Math.toRadians(follower().getPose().getHeading()));
-
+        follower().update();
         telemetry.addData("Order", order);
         telemetry.addData("Updates", counter);
-
+        follower().update();
         telemetry.update();
     }
 
@@ -296,10 +315,6 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
     public void onInit() {
         follower().setStartingPose(startPose);
         buildPaths();
-
-
-
-
         USE_WEBCAM = true;
         // Initialize AprilTag before waitForStart.
         initAprilTag();
@@ -307,8 +322,6 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
         telemetry.addData("DS preview on/off", "3 dots, Camera Stream");
         telemetry.addData(">", "Touch START to start OpMode");
         telemetry.update();
-
-
     }
 
     /** This method is called continuously after Init while waiting for "play". **/
@@ -412,7 +425,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                     order = "BFM";
                 }
                 else{
-                    order = "FMB";
+                    order = "MBF";
                 }
             }
             else if(aprilValue == 22){
@@ -426,7 +439,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                     order = "MBF";
                 }
                 else{
-                    order = "FMB";
+                    order = "MBF";
                 }
             }
             else if(aprilValue == 23){
@@ -440,14 +453,13 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                     order = "FMB";
                 }
                 else{
-                    order = "FMB";
+                    order = "MBF";
                 }
             }
             else{
-                order = "FMB";
+                order = "MBF";
             }
         }
-//        else if(limeLight.INSTANCE.GetBalls()%3==1){
         else if(limeLight.INSTANCE.GetBalls()%3==1){
             if(aprilValue==21){
 
@@ -461,7 +473,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                     order = "FMB";
                 }
                 else{
-                    order = "FMB";
+                    order = "MBF";
                 }
             }
             else if(aprilValue == 22){
@@ -475,7 +487,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                     order = "BFM";
                 }
                 else{
-                    order = "FMB";
+                    order = "MBF";
                 }
             }
             else if(aprilValue == 23){
@@ -489,14 +501,13 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                     order = "MBF";
                 }
                 else{
-                    order = "FMB";
+                    order = "MBF";
                 }
             }
             else{
-                order = "FMB";
+                order = "MBF";
             }
         }
-//        else if(limeLight.INSTANCE.GetBalls()%3==2){
         else if(limeLight.INSTANCE.GetBalls()%3==2){
             if(aprilValue==21){
                 if(Objects.equals(fc, "green")){
@@ -509,7 +520,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                     order = "MBF";
                 }
                 else{
-                    order = "FMB";
+                    order = "MBF";
                 }
             }
             else if(aprilValue == 22){
@@ -523,7 +534,7 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                     order = "FMB";
                 }
                 else{
-                    order = "FMB";
+                    order = "MBF";
                 }
             }
             else if(aprilValue == 23){
@@ -537,11 +548,11 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
                     order = "BFM";
                 }
                 else{
-                    order = "FMB";
+                    order = "MBF";
                 }
             }
             else{
-                order = "FMB";
+                order = "MBF";
             }
         }
 
@@ -566,11 +577,11 @@ public class Decode_Red_Auto_Lever extends NextFTCOpMode {
         return new ParallelGroup(
                 launchOne.shootCycle(),
                 new SequentialGroup(
-                        new Delay(0.25),
+                        new Delay(0.2),
                         new ParallelGroup(
                                 launchTwo.shootCycle(),
                                 new SequentialGroup(
-                                        new Delay(0.25),
+                                        new Delay(0.2),
                                         launchThree.shootCycle()
                                 )
                         )
